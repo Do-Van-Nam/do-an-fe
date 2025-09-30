@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Điểm danh khuôn mặt</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            font-family: Arial, sans-serif;
+            margin-top: 50px;
+        }
+        h1 {
+            color: #333;
+        }
+        .form-section {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        #video, #canvas {
+            border: 1px solid #ccc;
+            margin-top: 10px;
+        }
+        input[type="text"] {
+            padding: 8px;
+            width: 200px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #response {
+            margin-top: 20px;
+            font-weight: bold;
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <h1>Điểm danh bằng khuôn mặt</h1>
+
+    <!-- Form đăng ký -->
+    <div class="form-section">
+        <h2>Đăng ký khuôn mặt</h2>
+        <input type="text" id="student-id" placeholder="Nhập mã sinh viên" required>
+        <button onclick="capturePhoto('register')">Thêm thông tin</button>
+    </div>
+
+    <!-- Form điểm danh -->
+    <div class="form-section">
+        <h2>Điểm danh</h2>
+        <button onclick="capturePhoto('attendance')">Điểm danh</button>
+    </div>
+
+    <!-- Video hiển thị webcam và ảnh đã chụp -->
+    <video id="video" width="320" height="240" autoplay></video>
+    <canvas id="canvas" width="320" height="240" style="display:none;"></canvas>
+
+    <p id="response"></p>
+
+    <script>
+        // Bật webcam
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then((stream) => {
+                document.getElementById('video').srcObject = stream;
+            })
+            .catch((error) => {
+                console.error("Webcam không khả dụng:", error);
+            });
+
+        // Hàm chụp ảnh từ webcam và gửi ảnh đến server
+        function capturePhoto(action) {
+            const video = document.getElementById('video');
+            const canvas = document.getElementById('canvas');
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            canvas.toBlob((blob) => {
+                const formData = new FormData();
+                formData.append('image', blob);
+                
+                if (action === 'register') {
+                    // Đăng ký khuôn mặt
+                    const studentId = document.getElementById('student-id').value;
+                    if (!studentId) {
+                        document.getElementById('response').innerText = "Vui lòng nhập mã sinh viên!";
+                        return;
+                    }
+                    formData.append('student_id', studentId);
+
+                    fetch('/register', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById('response').innerText = data.success || data.error;
+                    })
+                    .catch(error => {
+                        document.getElementById('response').innerText = "Có lỗi xảy ra!";
+                        console.error("Đăng ký thất bại:", error);
+                    });
+                } else if (action === 'attendance') {
+                    // Điểm danh khuôn mặt
+                    fetch('/attendance', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        // Kết quả trả về sẽ là mã sinh viên nếu nhận diện thành công
+                        document.getElementById('response').innerText = `Mã sinh viên: ${data.student_id || data.error}`;
+                    })
+                    .catch(error => {
+                        document.getElementById('response').innerText = "Có lỗi xảy ra!";
+                        console.error("Điểm danh thất bại:", error);
+                    });
+                }
+            });
+        }
+    </script>
+</body>
+</html>

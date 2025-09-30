@@ -1,0 +1,6 @@
+.customInput:focus {
+    border-color: #ff44cb; /* Màu hồng cho viền khi click */
+    box-shadow: 0 0 5px #ff44cb; /* Thêm hiệu ứng bóng màu hồng */
+    outline: none; /* Loại bỏ đường viền outline mặc định */
+  }
+  
