@@ -5,7 +5,8 @@ import axios from 'axios'
 const api = axios.create({
     // baseURL: 'http://localhost:5713',
     // baseURL: 'https://wedding-planner-backend.up.railway.app',
-    baseURL: 'https://wedding-planner-backend.vercel.app',
+    //baseURL: 'https://wedding-planner-backend.vercel.app',
+    baseURL: 'https://do-an-be-seven.vercel.app',
     
     withCredentials: true
 })
