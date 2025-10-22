@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import api from '../api';
 import { AppContext } from '../AppContext';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 
 export default function VendorItem({ props }) {
@@ -14,7 +14,9 @@ export default function VendorItem({ props }) {
   // console.log(props)
   const [added, setAdded] = useState(false)
   const [inPlan, setInPlan] = useState(false)
-  const addToFavourite = async () => {
+  const addToFavourite = async (e) => {
+     e.preventDefault();     // Ngăn chuyển trang
+    e.stopPropagation();  
     api.post(`/favourite/${acc._id}/toggleVendor`, {
       vendorId: props._id
     })
@@ -31,7 +33,9 @@ export default function VendorItem({ props }) {
       )
       .catch(error => console.log(error))
   }, [])
-  const addToPlan = async () => {
+  const addToPlan = async (e) => {
+     e.preventDefault();     // Ngăn chuyển trang
+    e.stopPropagation(); 
     api.post(`/plan/${acc._id}/toggleVendor`, {
       vendorId: props._id,vendorType:props.type
     })
@@ -48,7 +52,9 @@ export default function VendorItem({ props }) {
       )
       .catch(error => console.log(error))
   }, [])
-  const handleContact = async ()=>{
+  const handleContact = async (e)=>{
+     e.preventDefault();     // Ngăn chuyển trang
+    e.stopPropagation(); 
     try {
       const response = await api.post(`/chatroom`,{
         user1Id:acc._id, user2Id:props.accId 
@@ -60,9 +66,12 @@ export default function VendorItem({ props }) {
     navigate('/chat')
   }
   return (
+    <Link to={`/marketplace/${props._id}/detail`}  className="text-decoration-none text-dark">
 
     <div className='m-2  bg-body-tertiary  position-relative'
-      style={{ height: '478px', width: '300px' }}>
+      style={{ height: '478px', width: '300px' }}
+      
+      >
 
       <button className='btn rounded-circle position-absolute top-0 end-0 d-flex justify-content-center align-items-center me-1 mt-1'
         style={{ backgroundColor: added ? '#ff44cb' : 'white', zIndex: '999', height: '30px', width: '30px' }}
@@ -162,6 +171,6 @@ export default function VendorItem({ props }) {
 )}
 
     </div>
-
+</Link>
   )
 }
