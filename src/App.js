@@ -3,7 +3,8 @@ import { useState, useEffect, useContext } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom'
 import LoginRegister from './pages/LoginRegister'
 import Home from './pages/Home/Home'
-import Marketplace from './pages/Marketplace'
+import Marketplace from './pages/Marketplace/Marketplace'
+import ProductDetail from './pages/Marketplace/ProductDetail'
 import Favourite from './pages/Favourite'
 import Rooms from './pages/Rooms/Rooms'
 import Problems from './pages/Problems/Problems'
@@ -33,7 +34,9 @@ function App() {
           <Route path='/manager/rooms' element={<Rooms />} />
           <Route path='/manager/problems' element={<Problems />} />
           <Route path='/manager/statistics' element={<Statistics />} />
+          // marketplace
           <Route path='/marketplace/*' element={<Marketplace />} />
+              <Route path='/marketplace/:id/detail' element={<ProductDetail />} />
           <Route path='/checklist' element={<Checklist/>} />
           <Route path='/favourite' element={<Favourite/>} />
           <Route path='/chat' element={<Message/>} />

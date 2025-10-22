@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { useLocation } from 'react-router-dom'
-import api from '../api'
+import api from '../../api'
 
-import Sidebar from '../components/Sidebar/Sidebar'
-import Header from '../components/Header/Header'
-import VendorItem from '../components/VendorItem'
-import RequestQuoteForm from '../components/RequestQuoteForm/RequestQuoteForm'
+import Sidebar from '../../components/Sidebar/Sidebar'
+import Header from '../../components/Header/Header'
+import VendorItem from '../../components/VendorItem'
+import RequestQuoteForm from '../../components/RequestQuoteForm/RequestQuoteForm'
 export default function Marketplace({ props1 }) {    
 
     const location = useLocation()
