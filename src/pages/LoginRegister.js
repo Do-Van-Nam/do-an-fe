@@ -1,7 +1,9 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState ,useEffect} from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AppContext } from '../AppContext'
+import { signInWithPopup } from "firebase/auth";
 import api from '../api'
+import { auth, googleProvider } from "../firebase";
 
 export default function Home() {
   const navigate = useNavigate()
@@ -45,14 +47,49 @@ export default function Home() {
       setSignupFailed(true)
     }
   }
-  const handleGoogleLogin = () => {
-    window.location.href = `${api.defaults.baseURL}/auth/google`
+  const handleGoogleLogin = async () => {
+    //window.location.href = `${api.defaults.baseURL}/auth/google`
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      console.log("User info:", result.user);
+      //alert("Đăng nhập thành công! Xin chào " + result.user.displayName);
+      const response = await api.post('/login/withGg', { email:result.user.email, displayName: result.user.displayName }, { withCredentials: true })
+      const { user } = response.data
+      localStorage.setItem('role', user.role)
+      localStorage.setItem('phone', phone)
+      setAcc(user)
+      navigate('/home')
+    } catch (error) {
+      console.error(error);
+      //alert("Đăng nhập thất bại!");
+      setLoginFailed(true)
+
+    }
   }
 
   const handleFacebookLogin = () => {
     window.location.href = `${api.defaults.baseURL}/auth/facebook`
   }
+  useEffect(() => {
+try {
+      api.get('/acc/check-auth')
+        .then(response => {
+          console.log(response.data.user)
+          setAcc(response.data.user)
+          navigate('/home')
+        }
+        )
+        .catch(error => {
+          console.log(error)
+        }
+        )
+    } catch (error) {
+      console.log(error)
+    }
 
+  },[])
+
+    
   return (
     <div
       className="d-flex justify-content-center align-items-center"
@@ -72,13 +109,13 @@ export default function Home() {
           }
 
           .btn-primary-custom {
-            background-color: #7f185bc6;
+            background-color: #ff44cb;
             color: white;
             border: none;
             transition: 0.2s ease-in-out;
           }
           .btn-primary-custom:hover {
-            background-color: #a025258f;
+            background-color: #ff44cb;
             color: #777;
           }
 
@@ -118,7 +155,7 @@ export default function Home() {
           }
 
           .toggle-text {
-            color: #7f185bc6;
+            color: #ff44cb;
             cursor: pointer;
           }
           .toggle-text:hover {
@@ -133,11 +170,11 @@ export default function Home() {
 
         <div className="text-center mt-3 mb-3">
           <img
-            src="/logo.png"
+            src="/images/flower.png"
             alt="logo"
             width="80"
             height="80"
-            className="rounded-circle border shadow-sm"
+            className="rounded-circle border shadow-sm d-block mx-auto"
           />
         </div>
         <form onSubmit={login ? LoginSubmit : SignupSubmit}>
@@ -195,7 +232,7 @@ export default function Home() {
             Google
           </button>
 
-          <button
+          {/* <button
             onClick={handleFacebookLogin}
             className="btn btn-social w-50 rounded-3 py-2 fw-medium d-flex align-items-center justify-content-center gap-2"
           >
@@ -205,7 +242,7 @@ export default function Home() {
               width="18"
             />
             Facebook
-          </button>
+          </button> */}
         </div>
 
         <div className="m-3" style={{ fontSize: '15px' }}>
