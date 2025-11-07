@@ -137,7 +137,7 @@ export default function Home() {
             alt="logo"
             width="80"
             height="80"
-            className="rounded-circle border shadow-sm"
+            className="rounded-circle border shadow-sm mx-auto d-block"
           />
         </div>
         <form onSubmit={login ? LoginSubmit : SignupSubmit}>
