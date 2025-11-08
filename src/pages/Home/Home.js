@@ -11,19 +11,6 @@ import EditWeddingInfo from '../../components/EditWeddingInfo/EditWeddingInfo'
 import AddVendorItem from '../../components/AddVendorItem'
 
 export default function Home() {
-    // const { selectedBuilding, rooms, setRooms } = useContext(AppContext)
-    // const [editBuildingPopup, setEditBuildingPopup] = useState(false)
-    // const [deleteBuildingPopup, setDeleteBuildingPopup] = useState(false)
-    // useEffect(() => {
-    //     api.get(`/room/${selectedBuilding._id}`)
-    //         .then((response) =>
-    //             setRooms(response.data.rooms)
-    //         )
-    //         .catch(error => {
-    //             console.log(error)
-    //         }
-    //         )
-    // }, [selectedBuilding])
     const [editWeddingInfoVisible, setEditWeddingInfoVisible] = useState(false)
     const { acc, setAcc, plan, setPlan } = useContext(AppContext);
     const navigate = useNavigate()
@@ -49,13 +36,6 @@ export default function Home() {
    
     const [plan1, setPlan1] = useState({})
 
-    // const floors = Array.from({ length: selectedBuilding.noFloor }, (__, index) => selectedBuilding.noFloor - index)
-    // const hideEditBuildingPopup = () => {
-    //     setEditBuildingPopup(false)
-    // }
-    // const hideDeleteBuildingPopup = () => {
-    //     setDeleteBuildingPopup(false)
-    // }
     const vendors = [
         { vendor: 'Nhiếp Ảnh Gia', icon: 'bi-camera-fill' },   // Icon: Máy ảnh
         { vendor: 'Tiệc Cưới', icon: 'bi-cake-fill' },        // Icon: Ly rượu
