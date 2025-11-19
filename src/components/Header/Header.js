@@ -162,14 +162,19 @@ export default function Header() {
         style={{ width: '100vw', zIndex: '999', height: '10vh' }}
       >
         <div className="d-flex align-items-center" style={{ height: '100%' }}>
+          <Link to={'/'} style={{ textDecoration: 'none', color: 'inherit' }}>
+            
           <img
             src="images/flower.png"
             class=" me-2"
             alt="..."
             style={{ height: '50px', width: 'auto' }}
-          ></img>
+            ></img>
+            </Link>
           <div className="d-flex flex-column">
+            <Link to={'/'} style={{ textDecoration: 'none', color: 'inherit' }}>
             <div>Wedding Planner</div>
+              </Link>
             <div className="d-flex">
               <h4
                 className={`me-3 ${style.headeritem}`}
@@ -190,9 +195,9 @@ export default function Header() {
               <Link to={'/favourite'} style={{ textDecoration: 'none', color: 'inherit' }}>
                 <h4 className={`me-3 ${style.headeritem}`}>Yêu thích</h4>
               </Link>
-              <Link to={'/profile'} style={{ textDecoration: 'none', color: 'inherit' }}>
+              {/* <Link to={'/profile'} style={{ textDecoration: 'none', color: 'inherit' }}>
                 <h4 className={`me-3 ${style.headeritem}`}>Trang cá nhân</h4>
-              </Link>
+              </Link> */}
             </div>
           </div>
         </div>
@@ -202,9 +207,11 @@ export default function Header() {
             <i class="bi bi-chat me-3" style={{ fontSize: '20px' }}></i>
           </Link>
           <div className="d-flex flex-column">
+            <Link to={'/profile'} style={{ textDecoration: 'none', color: 'inherit' }}>
             <div className="" style={{ fontSize: '25px' }}>
               {acc.name}
             </div>
+              </Link>
             <div className="" style={{ cursor: 'pointer' }} onClick={logOut}>
               Đăng xuất
             </div>
