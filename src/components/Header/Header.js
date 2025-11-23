@@ -203,6 +203,9 @@ export default function Header() {
         </div>
 
         <div className="d-flex align-items-center">
+          <Link to={'/cart'} style={{ textDecoration: 'none', color: 'inherit' }}>
+            <i class="bi bi-cart me-3" style={{ fontSize: '20px' }}></i>
+          </Link>
           <Link to={'/chat'} style={{ textDecoration: 'none', color: 'inherit' }}>
             <i class="bi bi-chat me-3" style={{ fontSize: '20px' }}></i>
           </Link>
