@@ -8,6 +8,7 @@ import Cookies from 'js-cookie'
 import ExpandedHeader from './ExpandedHeader'
 import style from './Header.module.css'
 import { Link } from 'react-router-dom'
+import UploadImage from '../UploadImage'
 
 export default function Header() {
   const navigate = useNavigate()
@@ -203,6 +204,7 @@ export default function Header() {
         </div>
 
         <div className="d-flex align-items-center">
+         {/* <UploadImage /> */}
           <Link to={'/cart'} style={{ textDecoration: 'none', color: 'inherit' }}>
             <i class="bi bi-cart me-3" style={{ fontSize: '20px' }}></i>
           </Link>

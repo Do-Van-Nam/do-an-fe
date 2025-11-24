@@ -69,7 +69,7 @@ export default function VendorItem({ props }) {
     <Link to={`/marketplace/${props._id}/detail`}  className="text-decoration-none text-dark">
 
     <div className='m-2  bg-body-tertiary  position-relative'
-      style={{ height: '478px', width: '300px' }}
+      style={{ height: '478px', width: '300px',boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}
       
       >
 
@@ -83,11 +83,11 @@ export default function VendorItem({ props }) {
       <div id="photoCarousel" className="carousel slide preview-image-box rounded position-relative" data-bs-ride="carousel"
         style={{ height: '50%', width: '100%' }}>
 
-        <div className="carousel-indicators">
+        {/* <div className="carousel-indicators">
           <button type="button" data-bs-target="#photoCarousel" data-bs-slide-to="0" className="active" aria-current="true" aria-label="Slide 1"></button>
           <button type="button" data-bs-target="#photoCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
           <button type="button" data-bs-target="#photoCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
-        </div>
+        </div> */}
 
         <div className="carousel-inner rounded" style={{ height: '100%', width: '100%' }}>
           <div className="carousel-item active" style={{ height: '100%' }}>
@@ -104,14 +104,14 @@ export default function VendorItem({ props }) {
           </div> */}
         </div>
 
-        <button className="carousel-control-prev" type="button" data-bs-target="#photoCarousel" data-bs-slide="prev">
+        {/* <button className="carousel-control-prev" type="button" data-bs-target="#photoCarousel" data-bs-slide="prev">
           <span className="carousel-control-prev-icon" aria-hidden="true"></span>
           <span className="visually-hidden">Previous</span>
         </button>
         <button className="carousel-control-next" type="button" data-bs-target="#photoCarousel" data-bs-slide="next">
           <span className="carousel-control-next-icon" aria-hidden="true"></span>
           <span className="visually-hidden">Next</span>
-        </button>
+        </button> */}
       </div>
 
       <div className='d-flex justify-content-between p-1'>
@@ -140,7 +140,7 @@ export default function VendorItem({ props }) {
         {props.description}
       </div>
 
-      <button type="button" className="btn btn-lg rounded-pill position-absolute bottom-0"
+      {/* <button type="button" className="btn btn-lg rounded-pill position-absolute bottom-0"
         style={{
           backgroundColor: '#ff44cb',
           color: 'white',
@@ -152,7 +152,7 @@ export default function VendorItem({ props }) {
         onClick={handleContact}
         >
         Liên hệ báo giá
-      </button>
+      </button> */}
 {isFavouritePage&& (
       <button type="button" className="btn btn-lg rounded-pill position-absolute bottom-0 end-0"
       style={{
@@ -161,7 +161,7 @@ export default function VendorItem({ props }) {
         fontWeight: '500',
         fontSize: '16px',
           padding: '10px 20px',
-        width: '50%'
+        width: '100%'
       }}
       onClick={addToPlan}
       >
