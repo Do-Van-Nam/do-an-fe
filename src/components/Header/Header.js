@@ -164,18 +164,18 @@ export default function Header() {
       >
         <div className="d-flex align-items-center" style={{ height: '100%' }}>
           <Link to={'/'} style={{ textDecoration: 'none', color: 'inherit' }}>
-            
-          <img
-            src="images/flower.png"
-            class=" me-2"
-            alt="..."
-            style={{ height: '50px', width: 'auto' }}
+
+            <img
+              src="images/flower.png"
+              class=" me-2"
+              alt="..."
+              style={{ height: '50px', width: 'auto' }}
             ></img>
-            </Link>
+          </Link>
           <div className="d-flex flex-column">
             <Link to={'/'} style={{ textDecoration: 'none', color: 'inherit' }}>
-            <div>Wedding Planner</div>
-              </Link>
+              <div>Wedding Planner</div>
+            </Link>
             <div className="d-flex">
               <h4
                 className={`me-3 ${style.headeritem}`}
@@ -204,7 +204,7 @@ export default function Header() {
         </div>
 
         <div className="d-flex align-items-center">
-         {/* <UploadImage /> */}
+          {/* <UploadImage /> */}
           <Link to={'/cart'} style={{ textDecoration: 'none', color: 'inherit' }}>
             <i class="bi bi-cart me-3" style={{ fontSize: '20px' }}></i>
           </Link>
@@ -213,10 +213,14 @@ export default function Header() {
           </Link>
           <div className="d-flex flex-column">
             <Link to={'/profile'} style={{ textDecoration: 'none', color: 'inherit' }}>
-            <div className="" style={{ fontSize: '25px' }}>
-              {acc.name}
-            </div>
-              </Link>
+              <div className="d-flex flex-row">
+            <i class="bi bi-person-circle me-3" style={{ fontSize: '20px' }}></i>
+
+                <div className="" style={{ fontSize: '25px' }}>
+                  {acc.name}
+                </div>
+              </div>
+            </Link>
             <div className="" style={{ cursor: 'pointer' }} onClick={logOut}>
               Đăng xuất
             </div>

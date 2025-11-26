@@ -19,7 +19,7 @@ export default function ProductImages({ images, thumbnails, productName }) {
       </div>
 
       {/* Thumbnails */}
-      <div className="grid grid-cols-4 gap-2">
+      {/* <div className="grid grid-cols-4 gap-2">
         {thumbnails.map((thumb, idx) => (
           <button
             key={idx}
@@ -36,7 +36,7 @@ export default function ProductImages({ images, thumbnails, productName }) {
             />
           </button>
         ))}
-      </div>
+      </div> */}
     </div>
   )
 }
