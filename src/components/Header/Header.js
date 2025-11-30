@@ -8,6 +8,7 @@ import Cookies from 'js-cookie'
 import ExpandedHeader from './ExpandedHeader'
 import style from './Header.module.css'
 import { Link } from 'react-router-dom'
+import UploadImage from '../UploadImage'
 
 export default function Header() {
   const navigate = useNavigate()
@@ -162,14 +163,19 @@ export default function Header() {
         style={{ width: '100vw', zIndex: '999', height: '10vh' }}
       >
         <div className="d-flex align-items-center" style={{ height: '100%' }}>
-          <img
-            src="images/flower.png"
-            class=" me-2"
-            alt="..."
-            style={{ height: '50px', width: 'auto' }}
-          ></img>
+          <Link to={'/'} style={{ textDecoration: 'none', color: 'inherit' }}>
+
+            <img
+              src="images/flower.png"
+              class=" me-2"
+              alt="..."
+              style={{ height: '50px', width: 'auto' }}
+            ></img>
+          </Link>
           <div className="d-flex flex-column">
-            <div>Wedding Planner</div>
+            <Link to={'/'} style={{ textDecoration: 'none', color: 'inherit' }}>
+              <div>Wedding Planner</div>
+            </Link>
             <div className="d-flex">
               <h4
                 className={`me-3 ${style.headeritem}`}
@@ -190,21 +196,31 @@ export default function Header() {
               <Link to={'/favourite'} style={{ textDecoration: 'none', color: 'inherit' }}>
                 <h4 className={`me-3 ${style.headeritem}`}>Yêu thích</h4>
               </Link>
-              <Link to={'/profile'} style={{ textDecoration: 'none', color: 'inherit' }}>
+              {/* <Link to={'/profile'} style={{ textDecoration: 'none', color: 'inherit' }}>
                 <h4 className={`me-3 ${style.headeritem}`}>Trang cá nhân</h4>
-              </Link>
+              </Link> */}
             </div>
           </div>
         </div>
 
         <div className="d-flex align-items-center">
+          {/* <UploadImage /> */}
+          <Link to={'/cart'} style={{ textDecoration: 'none', color: 'inherit' }}>
+            <i class="bi bi-cart me-3" style={{ fontSize: '20px' }}></i>
+          </Link>
           <Link to={'/chat'} style={{ textDecoration: 'none', color: 'inherit' }}>
             <i class="bi bi-chat me-3" style={{ fontSize: '20px' }}></i>
           </Link>
           <div className="d-flex flex-column">
-            <div className="" style={{ fontSize: '25px' }}>
-              {acc.name}
-            </div>
+            <Link to={'/profile'} style={{ textDecoration: 'none', color: 'inherit' }}>
+              <div className="d-flex flex-row">
+            <i class="bi bi-person-circle me-3" style={{ fontSize: '20px' }}></i>
+
+                <div className="" style={{ fontSize: '25px' }}>
+                  {acc.name}
+                </div>
+              </div>
+            </Link>
             <div className="" style={{ cursor: 'pointer' }} onClick={logOut}>
               Đăng xuất
             </div>

@@ -1,11 +1,13 @@
 "use client"
 
-import { useState } from "react"
+import { useState,useEffect } from "react"
 import { Star, ShoppingCart, Home } from "lucide-react"
 import ProductImages from "./product-images"
 import ShopInfo from "./shop-info"
 import ReviewsSection from "./reviews-section"
 import SimilarProducts from "./similar-products"
+import api from "../../api"
+import { useParams } from "react-router-dom";
 
 // Mock data
 const mockProduct = {
@@ -113,7 +115,32 @@ const mockSimilarProducts = [
 
 export default function ProductDetail() {
   const [quantity, setQuantity] = useState(1)
+  const [vendorItem, setVendorItem] = useState()
+  const [shop, setShop] = useState()
+  const { id } = useParams();
+  useEffect(() => {
+  const fetchData = async () => {
+    try {
+      // 1️⃣ Gọi API đầu tiên
+      const resItem = await api.get(`/vendoritem/id/${id}`);
+      console.log(resItem.data.vendoritem);
+      setVendorItem(resItem.data.vendoritem);
 
+      // 2️⃣ Lấy accId từ kết quả API đầu tiên
+      const accId = resItem.data.vendoritem.accId;
+
+      // 3️⃣ Gọi API tiếp theo
+      const resShop = await api.get(`/acc/id/${accId}`);
+      console.log(resShop.data.user);
+      setShop(resShop.data.user);
+
+    } catch (error) {
+      console.log("Error:", error);
+    }
+  };
+
+  fetchData();
+}, [id]);
   const handleBuyNow = () => {
     alert(`Added ${quantity} item(s) to cart!`)
   }
@@ -125,7 +152,7 @@ export default function ProductDetail() {
   const handleContactSeller = () => {
     alert("Opening contact form...")
   }
-
+  if (!vendorItem) return <p>Loading...</p>
   return (
     <main className="min-h-screen bg-background">
       {/* Header */}
@@ -146,7 +173,7 @@ export default function ProductDetail() {
             <ProductImages
               images={mockProduct.images}
               thumbnails={mockProduct.thumbnails}
-              productName={mockProduct.name}
+              productName={vendorItem.name}
             />
           </div>
 
@@ -156,17 +183,17 @@ export default function ProductDetail() {
             <div>
               <div className="mb-2 flex items-center gap-2">
                 <span className="inline-block rounded-full bg-pink-200 px-3 py-1 text-sm font-medium text-primary-foreground">
-                  {mockProduct.category}
+                  {vendorItem.type ?? ""}
                 </span>
                 <span className="inline-block rounded-full bg-pink-200 px-3 py-1 text-sm font-medium text-accent-foreground">
-                  {mockProduct.status === "both"
+                  {vendorItem.status === "both"
                     ? "For Sale & Rent"
-                    : mockProduct.status === "for-sale"
+                    : vendorItem.status === "for-sale"
                       ? "For Sale"
                       : "For Rent"}
                 </span>
               </div>
-              <h1 className="text-3xl font-bold text-foreground">{mockProduct.name}</h1>
+              <h1 className="text-3xl font-bold text-foreground">{vendorItem.name}</h1>
 
               {/* Rating */}
               <div className="mt-3 flex items-center gap-2">
@@ -174,30 +201,29 @@ export default function ProductDetail() {
                   {[...Array(5)].map((_, i) => (
                     <Star
                       key={i}
-                      className={`h-4 w-4 ${
-                        i < Math.floor(mockProduct.rating) ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground"
-                      }`}
+                      className={`h-4 w-4 ${i < Math.floor(mockProduct.rating) ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground"
+                        }`}
                     />
                   ))}
                 </div>
                 <span className="text-sm text-muted-foreground">
-                  {mockProduct.rating} ({mockProduct.reviewCount} reviews)
+                  {vendorItem.rating} ({vendorItem.reviewCount} reviews)
                 </span>
               </div>
             </div>
 
             {/* Pricing */}
             <div className="space-y-2 rounded-lg border border-border bg-card p-4">
-              {(mockProduct.status === "for-sale" || mockProduct.status === "both") && (
+              {(vendorItem.status === "for-sale" || vendorItem.status === "both") && (
                 <div>
                   <p className="text-sm text-muted-foreground">Purchase Price</p>
-                  <p className="text-2xl font-bold text-foreground">${mockProduct.price.toLocaleString()}</p>
+                  <p className="text-2xl font-bold text-foreground">${vendorItem.price.toLocaleString()}</p>
                 </div>
               )}
-              {(mockProduct.status === "for-rent" || mockProduct.status === "both") && (
+              {(vendorItem.status === "for-rent" || vendorItem.status === "both") && (
                 <div>
                   <p className="text-sm text-muted-foreground">Rental Price</p>
-                  <p className="text-xl font-semibold text-foreground">${mockProduct.rentPrice}/month</p>
+                  <p className="text-xl font-semibold text-foreground">${vendorItem.rentPrice}/month</p>
                 </div>
               )}
             </div>
@@ -230,17 +256,17 @@ export default function ProductDetail() {
 
             {/* Action Buttons */}
             <div className="space-y-3">
-              {(mockProduct.status === "for-sale" || mockProduct.status === "both") && (
+              {(vendorItem.status === "for-sale" || vendorItem.status === "both") && (
                 <button
                   onClick={handleBuyNow}
-                  style={{ backgroundColor: '#ff44cb'}}
+                  style={{ backgroundColor: '#ff44cb' }}
                   className="w-full rounded-lg  px-4 py-3 font-semibold text-primary-foreground hover:opacity-90"
                 >
                   <ShoppingCart className="mr-2 inline h-5 w-5" />
                   Buy Now
                 </button>
               )}
-              {(mockProduct.status === "for-rent" || mockProduct.status === "both") && (
+              {(vendorItem.status === "for-rent" || vendorItem.status === "both") && (
                 <button
                   onClick={handleRent}
                   className="w-full rounded-lg border-2 border-pink-300 px-4 py-3 font-semibold  hover:bg-primary hover:text-primary-foreground"
@@ -257,7 +283,7 @@ export default function ProductDetail() {
             </div>
 
             {/* Specifications */}
-            <div className="space-y-3 rounded-lg border border-border bg-card p-4">
+            {/* <div className="space-y-3 rounded-lg border border-border bg-card p-4">
               <h3 className="font-semibold text-foreground">Specifications</h3>
               <div className="space-y-2">
                 {mockProduct.specifications.map((spec, idx) => (
@@ -267,21 +293,21 @@ export default function ProductDetail() {
                   </div>
                 ))}
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
 
         {/* Description Section */}
         <div className="mt-8 rounded-lg border border-border bg-card p-6">
           <h2 className="mb-4 text-2xl font-bold text-foreground">Description</h2>
-          <p className="text-foreground">{mockProduct.description}</p>
+          <p className="text-foreground">{vendorItem.description}</p>
         </div>
 
         {/* Shop Info */}
-        <ShopInfo shop={mockShop} />
+        <ShopInfo shop={shop} />
 
         {/* Reviews Section */}
-        <ReviewsSection reviews={mockReviews} product={mockProduct} />
+        <ReviewsSection reviews={mockReviews} product={vendorItem} />
 
         {/* Similar Products */}
         <SimilarProducts products={mockSimilarProducts} />

@@ -16,6 +16,7 @@ import Checklist from './pages/Checklist'
 import Message from './pages/Message'
 import Budget from './pages/Budget'
 import Guests from './pages/Guests'
+import CartPage from "./pages/Cart/cart-page"
 
 import api from './api'
 import PrivateRoute from './PrivateRoute'
@@ -39,6 +40,7 @@ function App() {
         <Route path="/marketplace/*" element={<Marketplace />} />
         <Route path="/marketplace/:id/detail" element={<ProductDetail />} />
         <Route path="/checklist" element={<Checklist />} />
+        <Route path="/cart" element={<CartPage />} /> 
         <Route path="/favourite" element={<Favourite />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/chat" element={<Message />} />
