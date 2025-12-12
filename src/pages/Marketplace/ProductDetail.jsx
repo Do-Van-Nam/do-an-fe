@@ -1,123 +1,43 @@
 "use client"
 
-import { useState,useEffect } from "react"
+import { useState,useEffect, useContext } from "react"
 import { Star, ShoppingCart, Home } from "lucide-react"
 import ProductImages from "./product-images"
 import ShopInfo from "./shop-info"
 import ReviewsSection from "./reviews-section"
 import SimilarProducts from "./similar-products"
 import api from "../../api"
+import type from "../../utils"
 import { useParams } from "react-router-dom";
+import { AppContext } from "../../AppContext"
 
-// Mock data
-const mockProduct = {
-  id: 1,
-  name: "Premium Vintage Leather Sofa",
-  category: "Furniture",
-  status: "both", // 'for-sale', 'for-rent', 'both'
-  price: 1200,
-  rentPrice: 150,
-  images: [
-    "/premium-vintage-leather-sofa.jpg",
-    "/leather-sofa-detail-1.jpg",
-    "/leather-sofa-detail-2.jpg",
-    "/leather-sofa-detail-3.jpg",
-  ],
-  thumbnails: [
-    "/leather-sofa-thumb-1.jpg",
-    "/leather-sofa-thumb-2.jpg",
-    "/leather-sofa-thumb-3.jpg",
-    "/leather-sofa-thumb-4.jpg",
-  ],
-  description:
-    "Beautiful vintage leather sofa in excellent condition. Perfect for living rooms or offices. Features genuine Italian leather with a rich brown patina. Comfortable seating for 3-4 people.",
-  specifications: [
-    { label: "Material", value: "Genuine Italian Leather" },
-    { label: "Dimensions", value: '84" W x 36" D x 32" H' },
-    { label: "Color", value: "Rich Brown" },
-    { label: "Condition", value: "Excellent" },
-    { label: "Year", value: "1980s" },
-  ],
-  rating: 4.5,
-  reviewCount: 24,
-  tags: ["furniture", "vintage", "leather", "sofa"],
-}
-
-const mockShop = {
-  id: 1,
-  name: "Vintage & Co.",
-  logo: "/vintage-shop-logo.jpg",
-  rating: 4.8,
-  reviewCount: 156,
-  phone: "+1 (555) 123-4567",
-  email: "contact@vintageandco.com",
-  address: "123 Antique Street, Portland, OR 97201",
-  description:
-    "We specialize in curated vintage furniture and home decor. Every piece is carefully selected and restored to ensure quality and authenticity.",
-}
-
-const mockReviews = [
-  {
-    id: 1,
-    username: "Sarah M.",
-    rating: 5,
-    date: "2024-10-15",
-    comment: "Absolutely beautiful sofa! Arrived in perfect condition. Highly recommend!",
-  },
-  {
-    id: 2,
-    username: "John D.",
-    rating: 4,
-    date: "2024-10-10",
-    comment: "Great quality, exactly as described. Shipping was fast.",
-  },
-  {
-    id: 3,
-    username: "Emma L.",
-    rating: 5,
-    date: "2024-10-05",
-    comment: "The leather is so soft and the color is perfect for my living room!",
-  },
-]
-
-const mockSimilarProducts = [
-  {
-    id: 2,
-    name: "Mid-Century Modern Chair",
-    price: 450,
-    rentPrice: 60,
-    image: "/mid-century-modern-chair.jpg",
-    rating: 4.7,
-    reviewCount: 18,
-    status: "both",
-  },
-  {
-    id: 3,
-    name: "Vintage Wooden Coffee Table",
-    price: 350,
-    rentPrice: 45,
-    image: "/vintage-wooden-coffee-table.png",
-    rating: 4.6,
-    reviewCount: 12,
-    status: "for-sale",
-  },
-  {
-    id: 4,
-    name: "Antique Brass Floor Lamp",
-    price: 280,
-    rentPrice: 35,
-    image: "/antique-brass-floor-lamp.jpg",
-    rating: 4.8,
-    reviewCount: 22,
-    status: "both",
-  },
-]
 
 export default function ProductDetail() {
   const [quantity, setQuantity] = useState(1)
   const [vendorItem, setVendorItem] = useState()
   const [shop, setShop] = useState()
   const { id } = useParams();
+  const { acc } = useContext(AppContext)
+  const [items,setItems] = useState([])
+  const [reviews,setReviews] = useState([])
+    
+
+  useEffect(()=>{
+    try {
+      api.get(`/vendoritem/type/${vendorItem.type}`)
+          .then(response =>{
+            setItems(response.data.vendoritem)
+            console.log(response.data.vendoritem)
+          }
+          )
+          .catch(error=>
+            console.log(error)
+          )
+  
+    } catch (error) {
+      console.log(error)
+    }
+  },[vendorItem?.type])
   useEffect(() => {
   const fetchData = async () => {
     try {
@@ -134,6 +54,9 @@ export default function ProductDetail() {
       console.log(resShop.data.user);
       setShop(resShop.data.user);
 
+   const res = await   api.get(`/review/${id}`)
+  setReviews(res.data.reviews)
+  console.log(res.data.reviews)
     } catch (error) {
       console.log("Error:", error);
     }
@@ -144,7 +67,23 @@ export default function ProductDetail() {
   const handleBuyNow = () => {
     alert(`Added ${quantity} item(s) to cart!`)
   }
-
+  const handleAddToCart = async () => {
+    if (!acc?._id) {
+      alert("Vui lòng đăng nhập để thêm vào giỏ hàng")
+      return
+    }
+    try {
+      await api.post('/cart/add', {
+        accId: acc._id,
+        vendorId: vendorItem?._id,
+        quantity,
+      })
+      alert("Đã thêm vào giỏ hàng")
+    } catch (error) {
+      console.log(error)
+      alert("Thêm vào giỏ hàng thất bại")
+    }
+  }
   const handleRent = () => {
     alert(`Rental request submitted for ${quantity} item(s)!`)
   }
@@ -171,8 +110,8 @@ export default function ProductDetail() {
           {/* Left Column - Product Images */}
           <div className="lg:col-span-2">
             <ProductImages
-              images={mockProduct.images}
-              thumbnails={mockProduct.thumbnails}
+              image={vendorItem.imgLink}
+              thumbnails={[]}
               productName={vendorItem.name}
             />
           </div>
@@ -183,14 +122,14 @@ export default function ProductDetail() {
             <div>
               <div className="mb-2 flex items-center gap-2">
                 <span className="inline-block rounded-full bg-pink-200 px-3 py-1 text-sm font-medium text-primary-foreground">
-                  {vendorItem.type ?? ""}
+                  {type[vendorItem.type] ?? ""}
                 </span>
                 <span className="inline-block rounded-full bg-pink-200 px-3 py-1 text-sm font-medium text-accent-foreground">
-                  {vendorItem.status === "both"
-                    ? "For Sale & Rent"
-                    : vendorItem.status === "for-sale"
-                      ? "For Sale"
-                      : "For Rent"}
+                  {vendorItem.typeVendor === "both"
+                    ? "Bán & Cho Thuê"
+                    : vendorItem.typeVendor === "sell"
+                      ? "Bán"
+                      : "Cho Thuê"}
                 </span>
               </div>
               <h1 className="text-3xl font-bold text-foreground">{vendorItem.name}</h1>
@@ -201,36 +140,36 @@ export default function ProductDetail() {
                   {[...Array(5)].map((_, i) => (
                     <Star
                       key={i}
-                      className={`h-4 w-4 ${i < Math.floor(mockProduct.rating) ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground"
+                      className={`h-4 w-4 ${i < Math.floor(vendorItem.rating) ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground"
                         }`}
                     />
                   ))}
                 </div>
                 <span className="text-sm text-muted-foreground">
-                  {vendorItem.rating} ({vendorItem.reviewCount} reviews)
+                  {Math.floor(vendorItem.rate*10)/10} ({vendorItem.noReview} đánh giá)
                 </span>
               </div>
             </div>
 
             {/* Pricing */}
             <div className="space-y-2 rounded-lg border border-border bg-card p-4">
-              {(vendorItem.status === "for-sale" || vendorItem.status === "both") && (
+              {(vendorItem.typeVendor === "sell" || vendorItem.typeVendor === "both") && (
                 <div>
-                  <p className="text-sm text-muted-foreground">Purchase Price</p>
-                  <p className="text-2xl font-bold text-foreground">${vendorItem.price.toLocaleString()}</p>
+                  <p className="text-sm text-muted-foreground">Giá Bán</p>
+                  <p className="text-2xl font-bold text-foreground">{vendorItem.priceSell.toLocaleString()} đ</p>
                 </div>
               )}
-              {(vendorItem.status === "for-rent" || vendorItem.status === "both") && (
+              {(vendorItem.typeVendor === "rent" || vendorItem.typeVendor === "both") && (
                 <div>
-                  <p className="text-sm text-muted-foreground">Rental Price</p>
-                  <p className="text-xl font-semibold text-foreground">${vendorItem.rentPrice}/month</p>
+                  <p className="text-sm text-muted-foreground">Giá Thuê</p>
+                  <p className="text-xl font-semibold text-foreground">{vendorItem.priceRent.toLocaleString()} đ/tháng</p>
                 </div>
               )}
             </div>
 
             {/* Quantity Selector */}
             <div className="space-y-2">
-              <label className="text-sm font-medium text-foreground">Quantity</label>
+              <label className="text-sm font-medium text-foreground">Số Lượng</label>
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
@@ -256,29 +195,37 @@ export default function ProductDetail() {
 
             {/* Action Buttons */}
             <div className="space-y-3">
-              {(vendorItem.status === "for-sale" || vendorItem.status === "both") && (
+            <button
+                  onClick={handleAddToCart}
+                  style={{ backgroundColor: '#ff44cb' }}
+                  className="w-full rounded-lg  px-4 py-3 font-semibold text-primary-foreground hover:opacity-90"
+                >
+                  <ShoppingCart className="mr-2 inline h-5 w-5" />
+                  Thêm Vào Giỏ Hàng
+                </button>
+              {(vendorItem.typeVendor === "sell" || vendorItem.typeVendor === "both") && (
                 <button
                   onClick={handleBuyNow}
                   style={{ backgroundColor: '#ff44cb' }}
                   className="w-full rounded-lg  px-4 py-3 font-semibold text-primary-foreground hover:opacity-90"
                 >
                   <ShoppingCart className="mr-2 inline h-5 w-5" />
-                  Buy Now
+                  Mua Ngay
                 </button>
               )}
-              {(vendorItem.status === "for-rent" || vendorItem.status === "both") && (
+              {(vendorItem.typeVendor === "rent" || vendorItem.typeVendor === "both") && (
                 <button
                   onClick={handleRent}
                   className="w-full rounded-lg border-2 border-pink-300 px-4 py-3 font-semibold  hover:bg-primary hover:text-primary-foreground"
                 >
-                  Rent
+                  Thuê Ngay
                 </button>
               )}
               <button
                 onClick={handleContactSeller}
                 className="w-full rounded-lg border border-border px-4 py-3 font-semibold text-foreground hover:bg-muted"
               >
-                Contact Seller
+                Liên Hệ Người Bán
               </button>
             </div>
 
@@ -299,7 +246,7 @@ export default function ProductDetail() {
 
         {/* Description Section */}
         <div className="mt-8 rounded-lg border border-border bg-card p-6">
-          <h2 className="mb-4 text-2xl font-bold text-foreground">Description</h2>
+          <h2 className="mb-4 text-2xl font-bold text-foreground">Mô tả sản phẩm</h2>
           <p className="text-foreground">{vendorItem.description}</p>
         </div>
 
@@ -307,10 +254,10 @@ export default function ProductDetail() {
         <ShopInfo shop={shop} />
 
         {/* Reviews Section */}
-        <ReviewsSection reviews={mockReviews} product={vendorItem} />
+        <ReviewsSection reviews={reviews} product={vendorItem} />
 
         {/* Similar Products */}
-        <SimilarProducts products={mockSimilarProducts} />
+        <SimilarProducts items={items} />
       </div>
     </main>
   )

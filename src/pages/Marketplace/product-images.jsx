@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { LazyLoadImage } from 'react-lazy-load-image-component';
-export default function ProductImages({ images, thumbnails, productName }) {
+export default function ProductImages({ image, thumbnails, productName }) {
   const [selectedImage, setSelectedImage] = useState(0)
 
   return (
@@ -10,10 +10,9 @@ export default function ProductImages({ images, thumbnails, productName }) {
       {/* Main Image */}
       <div className="relative aspect-square overflow-hidden rounded-lg border border-border bg-muted">
         <LazyLoadImage
-          src={images[selectedImage] || "/placeholder.svg"}
+          src={image || "/placeholder.svg"}
           alt={productName}
-          fill
-          className="object-cover"
+          className="w-full h-full object-cover"
           priority
         />
       </div>

@@ -4,12 +4,14 @@ import CartItem from "./cart-item";          // Điều chỉnh đường dẫn 
 import FooterOrderBar from "./footer-order-bar"; // Điều chỉnh đường dẫn
 import { Loader2 } from "lucide-react";
 import { AppContext } from '../../AppContext'
+import api from "../../api";
+import CheckoutPage from "./checkout-page";
 
 const CartPage = () => {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const [showCheckout, setShowCheckout] = useState(false)
   const { acc } = useContext(AppContext);
   const accId = acc._id
   useEffect(() => {
@@ -19,20 +21,20 @@ const CartPage = () => {
         setError(null);
 
         // 1. Lấy danh sách sản phẩm trong giỏ hàng
-        const cartResponse = await axios.get(`/cart/${acc._id}`);
-        const cartData = cartResponse.data; // { vendors: [{ vendorId, quantity }] }
+        const cartResponse = await api.get(`/cart/${acc._id}`);
+        const cartData = cartResponse.data.cart; // { vendors: [{ vendorId, quantity }] }
 
         // 2. Lấy chi tiết từng vendor
         const itemsWithDetails = await Promise.all(
           cartData.vendors.map(async (vendor) => {
             try {
-              const vendorResponse = await axios.get(
-                `/vendorItem/${vendor.vendorId}`
+              const vendorResponse = await api.get(
+                `/vendorItem/id/${vendor.vendorId}`
               );
               return {
                 vendorId: vendor.vendorId,
                 quantity: vendor.quantity,
-                vendorDetail: vendorResponse.data, // { name, image, price }
+                vendorDetail: vendorResponse.data.vendoritem, // { name, image, price }
                 selected: false,
               };
             } catch (err) {
@@ -59,7 +61,7 @@ const CartPage = () => {
     if (newQuantity < 1) return;
 
     try {
-      await axios.post(`/cart/update`, {
+      await api.put(`/cart/update`, {
         accId,
         vendorId,
         quantity: newQuantity,
@@ -78,9 +80,11 @@ const CartPage = () => {
 
   const handleRemoveItem = async (vendorId) => {
     try {
-      await axios.post(`/cart/remove`, {
-        accId,
-        vendorId,
+      await api.delete(`/cart/remove`, {
+        data: {
+          accId,
+          vendorId,
+        },
       });
 
       setCartItems((prev) => prev.filter((item) => item.vendorId !== vendorId));
@@ -104,9 +108,23 @@ const CartPage = () => {
 
   const selectedItems = cartItems.filter((item) => item.selected);
   const totalPrice = selectedItems.reduce(
-    (sum, item) => sum + item.quantity * item.vendorDetail.price,
+    (sum, item) => sum + item.quantity * item.vendorDetail.priceSell,
     0
   );
+
+  const handleCheckout = () => {
+    if (selectedItems.length > 0) {
+      setShowCheckout(true)
+    }
+  }
+
+  const handleBackFromCheckout = () => {
+    setShowCheckout(false)
+  }
+
+  if (showCheckout) {
+    return <CheckoutPage items={selectedItems} totalPrice={totalPrice} onBack={handleBackFromCheckout} />
+  }
 
   if (loading) {
     return (
@@ -120,7 +138,7 @@ const CartPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background pb-24">
+    <div className="min-h-screen bg-background pb-24" style={{ padding: '8vw' }}>
       <div className="max-w-4xl mx-auto px-4 py-6">
         <h1 className="text-3xl font-bold mb-6 text-foreground">Giỏ hàng</h1>
 
@@ -171,6 +189,7 @@ const CartPage = () => {
           selectedCount={selectedItems.length}
           totalPrice={totalPrice}
           isDisabled={selectedItems.length === 0}
+          onCheckout={handleCheckout}
         />
       )}
     </div>

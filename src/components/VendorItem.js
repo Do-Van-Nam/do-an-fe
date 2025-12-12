@@ -123,7 +123,7 @@ export default function VendorItem({ props }) {
       </div>
 
       <div className='ms-2' style={{ fontSize: '18px', fontWeight: '600' }}>{props.name}</div>
-      <div className='ms-2' style={{ fontSize: '14px', color: '#6c757d' }}>{props.subInfo} <br/> {props.priceFrom}-{props.priceTo} đ</div>
+      <div className='ms-2' style={{ fontSize: '14px', color: '#6c757d' }}>{props.vendorType==="sell" ? `Giá bán:${props.priceSell} đ` : props.vendorType==="rent" ? `Giá thuê:${props.priceRent} đ` : <>Giá bán:{props.priceSell} đ<br />Giá thuê:{props.priceRent} đ</>}</div>
 
       <div className='ms-2'
         style={{
