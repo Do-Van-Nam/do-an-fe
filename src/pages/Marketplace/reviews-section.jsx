@@ -9,8 +9,16 @@ import { AppContext } from "../../AppContext"
 export default function ReviewsSection({ reviews, product }) {
   console.log("reviews nhan vao:",reviews)
   const [newReview, setNewReview] = useState({ name: "", rating: 5, comment: "" })
-  const [submittedReviews, setSubmittedReviews] = useState(reviews)
+  const [submittedReviews, setSubmittedReviews] = useState(reviews || [])
+  console.log("submittedReviews nhan vao:",submittedReviews)
+
   const { acc } = useContext(AppContext)
+
+  useEffect(() => {
+    if (reviews && reviews.length > 0) {
+      setSubmittedReviews(reviews)
+    }
+  }, [reviews])
   const handleSubmitReview = async (e) => {
     e.preventDefault()
     try {
@@ -19,6 +27,7 @@ export default function ReviewsSection({ reviews, product }) {
         accId: acc._id,
         review: newReview.comment,
         rate: newReview.rating,
+        name:newReview.name
       })
 
       alert("Đánh giá thành công!")
@@ -112,10 +121,10 @@ export default function ReviewsSection({ reviews, product }) {
       <div className="space-y-4">
         <h3 className="font-semibold text-foreground">Đánh Giá & Bình Luận Của Khách Hàng</h3>
         {submittedReviews.map((review) => (
-          <div key={review.id} className="rounded-lg border border-border p-4">
+          <div key={review._id} className="rounded-lg border border-border p-4">
             <div className="flex items-start justify-between">
               <div>
-                <p className="font-semibold text-foreground">{review.username}</p>
+                <p className="font-semibold text-foreground">{review.name}</p>
                 <div className="mt-1 flex items-center gap-2">
                   <div className="flex gap-1">
                     {[...Array(5)].map((_, i) => (

@@ -118,7 +118,7 @@ export default function VendorItem({ props }) {
         <p style={{ fontSize: '14px', margin: '0' }}>{props.address}</p>
         <p style={{ fontSize: '14px', margin: '0' }}>
           <i className="bi bi-star-fill" style={{ color: '#fbaf00' }}> </i>
-          {props.rate} ({props.noReview})
+          {Math.ceil(props.rate*10)/10} ({props.noReview})
         </p>
       </div>
 

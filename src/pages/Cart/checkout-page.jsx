@@ -175,7 +175,7 @@ export default function CheckoutPage({ items, totalPrice, onBack }) {
             <label
               className={`flex items-center gap-4 p-4 rounded-lg border-2 cursor-pointer transition-all ${
                 paymentMethod === "cash"
-                  ? "border-blue-500 bg-blue-50 dark:bg-blue-950"
+                  ? "border-blue-500 bg-blue-500"
                   : "border-border hover:border-muted-foreground"
               }`}
             >
@@ -195,17 +195,17 @@ export default function CheckoutPage({ items, totalPrice, onBack }) {
                 <Banknote className="w-5 h-5" />
               </div>
               <div className="flex-1">
-                <p className="font-medium text-foreground">Tiền mặt khi nhận hàng</p>
-                <p className="text-sm text-muted-foreground">Thanh toán khi nhận được hàng</p>
+                <p className={`font-medium ${paymentMethod === "cash" ? "text-white" : "text-foreground"}`}>Tiền mặt khi nhận hàng</p>
+                <p className={`text-sm ${paymentMethod === "cash" ? "text-white/90" : "text-muted-foreground"}`}>Thanh toán khi nhận được hàng</p>
               </div>
-              {paymentMethod === "cash" && <CheckCircle2 className="w-6 h-6 text-blue-500" />}
+              {paymentMethod === "cash" && <CheckCircle2 className="w-6 h-6 text-white" />}
             </label>
 
             {/* Bank transfer */}
             <label
               className={`flex items-center gap-4 p-4 rounded-lg border-2 cursor-pointer transition-all ${
                 paymentMethod === "bank"
-                  ? "border-blue-500 bg-blue-50 dark:bg-blue-950"
+                  ? "border-blue-500 bg-blue-500"
                   : "border-border hover:border-muted-foreground"
               }`}
             >
@@ -225,10 +225,10 @@ export default function CheckoutPage({ items, totalPrice, onBack }) {
                 <Building2 className="w-5 h-5" />
               </div>
               <div className="flex-1">
-                <p className="font-medium text-foreground">Chuyển khoản ngân hàng</p>
-                <p className="text-sm text-muted-foreground">Thanh toán qua chuyển khoản</p>
+                <p className={`font-medium ${paymentMethod === "bank" ? "text-white" : "text-foreground"}`}>Chuyển khoản ngân hàng</p>
+                <p className={`text-sm ${paymentMethod === "bank" ? "text-white/90" : "text-muted-foreground"}`}>Thanh toán qua chuyển khoản</p>
               </div>
-              {paymentMethod === "bank" && <CheckCircle2 className="w-6 h-6 text-blue-500" />}
+              {paymentMethod === "bank" && <CheckCircle2 className="w-6 h-6 text-white" />}
             </label>
           </div>
 
