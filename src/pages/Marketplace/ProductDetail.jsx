@@ -18,6 +18,7 @@ export default function ProductDetail() {
   const [showRentPopup, setShowRentPopup] = useState(false)
   const [vendorItem, setVendorItem] = useState()
   const [shop, setShop] = useState()
+  const [periodRent, setPeriodRent] = useState("")
   const { id } = useParams();
   const { acc } = useContext(AppContext)
   const [items,setItems] = useState([])
@@ -55,7 +56,8 @@ export default function ProductDetail() {
       const resItem = await api.get(`/vendoritem/id/${id}`);
       console.log(resItem.data.vendoritem);
       setVendorItem(resItem.data.vendoritem);
-
+const period = resItem.data.vendoritem.periodRent
+setPeriodRent(period == "day" ? "ngày" : period == "week" ? "tuần":"tháng")
       // 2️⃣ Lấy accId từ kết quả API đầu tiên
       const accId = resItem.data.vendoritem.accId;
 
@@ -99,7 +101,50 @@ export default function ProductDetail() {
     setShowRentPopup(true)
   }
 
+  // Helper function to calculate rental price
+  const calculateRentalPrice = (startDate, endDate, periodRent, priceRent, quantity) => {
+    const start = new Date(startDate)
+    const end = new Date(endDate)
+    const diffTime = Math.abs(end - start)
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1 // +1 để tính cả ngày bắt đầu và kết thúc
+    
+    let periods = 0
+    const period = periodRent?.toLowerCase() || 'month'
+    
+    if (period === 'day') {
+      periods = diffDays
+    } else if (period === 'week') {
+      periods = Math.ceil(diffDays / 7)
+    } else if (period === 'month') {
+      // Tính số tháng chính xác hơn
+      const startYear = start.getFullYear()
+      const startMonth = start.getMonth()
+      const endYear = end.getFullYear()
+      const endMonth = end.getMonth()
+      const endDay = end.getDate()
+      const startDay = start.getDate()
+      
+      // Tính số tháng
+      let months = (endYear - startYear) * 12 + (endMonth - startMonth)
+      // Nếu ngày kết thúc >= ngày bắt đầu, tính thêm 1 tháng
+      if (endDay >= startDay) {
+        months += 1
+      }
+      periods = months
+    } else {
+      // Mặc định là tháng nếu không xác định được
+      periods = Math.ceil(diffDays / 30)
+    }
+    
+    return priceRent * periods * quantity
+  }
+
   const handleRentSubmit = async () => {
+    if (!acc?._id) {
+      alert("Vui lòng đăng nhập để đặt thuê")
+      return
+    }
+
     if (!rentData.startDate || !rentData.endDate || !rentData.name || !rentData.phone || !rentData.address) {
       alert("Vui lòng điền đầy đủ thông tin")
       return
@@ -111,8 +156,27 @@ export default function ProductDetail() {
     }
 
     try {
-      // TODO: Gọi API để tạo đơn thuê
-      console.log("Rent data:", rentData)
+      // Tính tổng tiền thuê
+      const totalPrice = calculateRentalPrice(
+        rentData.startDate,
+        rentData.endDate,
+        vendorItem.periodRent,
+        vendorItem.priceRent,
+        rentData.quantity
+      )
+
+      // Gọi API để tạo đơn thuê
+      await api.post('/order/add', {
+        accId: acc._id,
+        itemId: vendorItem._id,
+        quantity: rentData.quantity,
+        price: totalPrice,
+        status: 'pending',
+        typeOrder: 'rent',
+        startDate: rentData.startDate,
+        endDate: rentData.endDate,
+      })
+
       alert("Yêu cầu thuê đã được gửi thành công!")
       setShowRentPopup(false)
       setRentData({
@@ -285,14 +349,13 @@ export default function ProductDetail() {
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-muted-foreground">Tổng tiền thuê:</span>
                     <span className="text-xl font-bold text-blue-600">
-                      {(() => {
-                        const start = new Date(rentData.startDate)
-                        const end = new Date(rentData.endDate)
-                        const diffTime = Math.abs(end - start)
-                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-                        const months = Math.ceil(diffDays / 30)
-                        return (vendorItem.priceRent * months * rentData.quantity).toLocaleString()
-                      })()} đ
+                      {calculateRentalPrice(
+                        rentData.startDate,
+                        rentData.endDate,
+                        vendorItem.periodRent,
+                        vendorItem.priceRent,
+                        rentData.quantity
+                      ).toLocaleString()} đ
                     </span>
                   </div>
                 </div>
@@ -388,7 +451,7 @@ export default function ProductDetail() {
               {(vendorItem.typeVendor === "rent" || vendorItem.typeVendor === "both") && (
                 <div>
                   <p className="text-sm text-muted-foreground">Giá Thuê</p>
-                  <p className="text-xl font-semibold text-foreground">{vendorItem.priceRent.toLocaleString()} đ/tháng</p>
+                  <p className="text-xl font-semibold text-foreground">{vendorItem.priceRent.toLocaleString()} đ/{vendorItem.periodRent}</p>
                 </div>
               )}
             </div>
