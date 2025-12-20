@@ -7,7 +7,7 @@ import PropTypes from "prop-types";
 
 // Component CartItem
 function CartItem({ item, onQuantityChange, onRemove, onSelect }) {
-  const totalPrice = item.quantity * item.vendorDetail.price;
+  const totalPrice = item.quantity * item.vendorDetail.priceSell;
 
   return (
     <div className="bg-card rounded-lg shadow-sm border border-border p-4 flex gap-4 hover:shadow-md transition-shadow">
@@ -22,7 +22,7 @@ function CartItem({ item, onQuantityChange, onRemove, onSelect }) {
       {/* Hình ảnh nhà cung cấp */}
       <div className="flex-shrink-0">
         <img
-          src={item.vendorDetail.image || "/placeholder.svg"}
+          src={item.vendorDetail.imgLink || "/placeholder.svg"}
           alt={item.vendorDetail.name}
           className="w-20 h-20 object-cover rounded-md bg-muted"
         />
@@ -34,7 +34,7 @@ function CartItem({ item, onQuantityChange, onRemove, onSelect }) {
           {item.vendorDetail.name}
         </h3>
         <p className="text-primary font-semibold">
-          ${item.vendorDetail.price.toFixed(2)}
+            {item.vendorDetail.priceSell.toLocaleString()} đ
         </p>
       </div>
 
@@ -52,7 +52,7 @@ function CartItem({ item, onQuantityChange, onRemove, onSelect }) {
       <div className="flex-shrink-0 flex flex-col items-end justify-center">
         <p className="text-sm text-muted-foreground">Tổng</p>
         <p className="font-semibold text-foreground">
-          ${totalPrice.toFixed(2)}
+          {totalPrice.toLocaleString()} đ
         </p>
       </div>
 

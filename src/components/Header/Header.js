@@ -208,6 +208,9 @@ export default function Header() {
           <Link to={'/cart'} style={{ textDecoration: 'none', color: 'inherit' }}>
             <i class="bi bi-cart me-3" style={{ fontSize: '20px' }}></i>
           </Link>
+          <Link to={'/order-tracking'} style={{ textDecoration: 'none', color: 'inherit' }}>
+            <i class="bi bi-bag-check me-3" style={{ fontSize: '20px' }}></i>
+          </Link>
           <Link to={'/chat'} style={{ textDecoration: 'none', color: 'inherit' }}>
             <i class="bi bi-chat me-3" style={{ fontSize: '20px' }}></i>
           </Link>

@@ -2,12 +2,10 @@
 
 import React from 'react';
 
-const FooterOrderBar = ({ selectedCount, totalPrice, isDisabled }) => {
+const FooterOrderBar = ({ selectedCount, totalPrice, isDisabled, onCheckout }) => {
   const handlePlaceOrder = () => {
     if (!isDisabled) {
-      console.log(`Đặt hàng thành công: ${selectedCount} sản phẩm, tổng tiền: $${totalPrice.toFixed(2)}`);
-      // Thêm logic đặt hàng thực tế ở đây (gọi API, v.v.)
-      // Ví dụ: placeOrderAPI(selectedCount, totalPrice);
+      onCheckout();
     }
   };
 
@@ -20,7 +18,7 @@ const FooterOrderBar = ({ selectedCount, totalPrice, isDisabled }) => {
             Đã chọn <strong>{selectedCount}</strong> sản phẩm
           </p>
           <p className="text-2xl font-bold text-gray-900">
-            ${totalPrice.toFixed(2)}
+            {totalPrice.toLocaleString()} đ
           </p>
         </div>
 

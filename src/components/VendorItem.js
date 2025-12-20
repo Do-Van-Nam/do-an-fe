@@ -118,12 +118,12 @@ export default function VendorItem({ props }) {
         <p style={{ fontSize: '14px', margin: '0' }}>{props.address}</p>
         <p style={{ fontSize: '14px', margin: '0' }}>
           <i className="bi bi-star-fill" style={{ color: '#fbaf00' }}> </i>
-          {props.rate} ({props.noReview})
+          {Math.ceil(props.rate*10)/10} ({props.noReview})
         </p>
       </div>
 
       <div className='ms-2' style={{ fontSize: '18px', fontWeight: '600' }}>{props.name}</div>
-      <div className='ms-2' style={{ fontSize: '14px', color: '#6c757d' }}>{props.subInfo} <br/> {props.priceFrom}-{props.priceTo} đ</div>
+      <div className='ms-2' style={{ fontSize: '14px', color: '#6c757d' }}>{props.vendorType==="sell" ? `Giá bán:${props.priceSell} đ` : props.vendorType==="rent" ? `Giá thuê:${props.priceRent} đ` : <>Giá bán:{props.priceSell} đ<br />Giá thuê:{props.priceRent} đ</>}</div>
 
       <div className='ms-2'
         style={{
