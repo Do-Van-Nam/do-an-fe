@@ -29,51 +29,7 @@ const statusConfig = {
   },
 }
 
-// Mock data for demonstration
-    const mockOrders = [
-  {
-    orderId: "ORD001",
-    status: "pending",
-    items: [
-      { vendorId: "1", name: "Bánh mì thịt nướng", image: "/delicious-banh-mi.png", price: 25000, quantity: 2 },
-      { vendorId: "2", name: "Trà sữa trân châu", image: "/tra-sua.jpg", price: 35000, quantity: 1 },
-    ],
-    totalPrice: 85000,
-    createdAt: "2024-01-15T10:30:00",
-    customerName: "Nguyễn Văn A",
-    address: "123 Nguyễn Huệ, Q.1, TP.HCM",
-  },
-  {
-    orderId: "ORD002",
-    status: "delivering",
-    items: [{ vendorId: "3", name: "Cơm tấm sườn bì", image: "/com-tam.png", price: 45000, quantity: 1 }],
-    totalPrice: 45000,
-    createdAt: "2024-01-14T14:20:00",
-    customerName: "Nguyễn Văn A",
-    address: "123 Nguyễn Huệ, Q.1, TP.HCM",
-  },
-  {
-    orderId: "ORD003",
-    status: "completed",
-    items: [
-      { vendorId: "4", name: "Phở bò tái", image: "/pho-bo.jpg", price: 55000, quantity: 2 },
-      { vendorId: "5", name: "Nước mía", image: "/nuoc-mia.jpg", price: 15000, quantity: 2 },
-    ],
-    totalPrice: 140000,
-    createdAt: "2024-01-10T09:15:00",
-    customerName: "Nguyễn Văn A",
-    address: "123 Nguyễn Huệ, Q.1, TP.HCM",
-  },
-  {
-    orderId: "ORD004",
-    status: "completed",
-    items: [{ vendorId: "6", name: "Bún chả Hà Nội", image: "/bun-cha.jpg", price: 50000, quantity: 1 }],
-    totalPrice: 50000,
-    createdAt: "2024-01-08T12:00:00",
-    customerName: "Nguyễn Văn A",
-    address: "456 Lê Lợi, Q.3, TP.HCM",
-  },
-]
+
 
 export default function OrderTrackingPage() {
   const { acc } = useContext(AppContext)
@@ -86,62 +42,84 @@ export default function OrderTrackingPage() {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        setLoading(true)
-        setError(null)
-
-        const response = await api.get(`/order/${accId}`)
-        const orderData = response.data.order
-
-        if (!orderData || !orderData.items) {
-          setOrders([])
-          return
+        setLoading(true);
+        setError(null);
+  
+        const response = await api.get(`/order/${accId}`);
+        const orderList = response.data.order; // giả sử đây là mảng các order
+  
+        // Nếu không có đơn hàng
+        if (!orderList || orderList.length === 0) {
+          setOrders([]);
+          return;
         }
-
-        const itemsWithDetails = await Promise.all(
-          orderData.items.map(async (item) => {
-            try {
-              const vendorResponse = await api.get(`/vendorItem/id/${item.itemId}`)
-              const detail = vendorResponse.data.vendoritem
-              return {
-                ...item,
-                name: detail?.name,
-                image: detail?.imgLink,
-                price: detail?.priceSell ?? item.price ?? 0,
+  
+        // Duyệt qua từng order (mỗi order có nhiều items)
+        const allNormalizedOrders = [];
+  
+        for (const order of orderList) {
+          // Lấy chi tiết từng item trong order này
+          const itemsWithDetails = await Promise.all(
+            order.items.map(async (item) => {
+              try {
+                const vendorResponse = await api.get(`/vendorItem/id/${item.itemId}`);
+                const detail = vendorResponse.data.vendoritem;
+  
+                return {
+                  ...item,
+                  name: detail?.name || "Không có tên",
+                  image: detail?.imgLink || "/placeholder.svg",
+                  price: detail?.priceSell ?? item.price ?? 0,
+                };
+              } catch (err) {
+                console.error(`Lỗi lấy thông tin item ${item.itemId}:`, err);
+                return {
+                  ...item,
+                  name: item.name || "Không có tên",
+                  image: "/placeholder.svg",
+                  price: item.price ?? 0,
+                };
               }
-            } catch (err) {
-              console.error(`Lỗi khi lấy vendorItem ${item.itemId}:`, err)
-              return {
-                ...item,
-                price: item.price ?? 0,
-              }
-            }
-          })
-        )
-
-        const totalPrice = itemsWithDetails.reduce(
-          (sum, item) => sum + (item.price || 0) * (item.quantity || 1),
-          0
-        )
-
-        const normalizedOrders = itemsWithDetails.map((item, idx) => ({
-          orderId: `${orderData._id}-${idx}`,
-          status: item.status || "pending",
-          items: [item],
-          totalPrice: (item.price || 0) * (item.quantity || 1),
-          createdAt: orderData.orderDate || new Date(),
-        }))
-
-        setOrders(normalizedOrders)
+            })
+          );
+  
+          // Tính tổng tiền cho toàn bộ order (nếu cần dùng ở nơi khác)
+          // const orderTotalPrice = itemsWithDetails.reduce(
+          //   (sum, item) => sum + (item.price * (item.quantity || 1)),
+          //   0
+          // );
+  
+          // Normalize: tách mỗi item thành 1 "order con" để hiển thị dạng list phẳng
+          const normalizedForThisOrder = itemsWithDetails.map((item, idx) => ({
+            orderId: `${order._id}-${idx}`, // dùng order._id (mỗi order có id riêng)
+            status: order.status || item.status || "pending", // ưu tiên status của order
+            items: [item],
+            totalPrice: order.typeOrder == "rent"? order.totalAmount: (item.price || 0) * (item.quantity || 1),
+            createdAt: order.orderDate || new Date(),
+            originalOrderId: order._id, // giữ lại để group sau nếu cần
+            typeOrder:order.typeOrder
+          }));
+  
+          allNormalizedOrders.push(...normalizedForThisOrder);
+        }
+  
+        // Sau khi xử lý hết tất cả các order → cập nhật state 1 lần duy nhất
+        console.log("All normalized orders:", allNormalizedOrders);
+        setOrders(allNormalizedOrders);
+  
       } catch (err) {
-        setError("Không thể tải danh sách đơn hàng. Vui lòng thử lại.")
-        console.error("Error fetching orders:", err)
+        setError("Không thể tải danh sách đơn hàng. Vui lòng thử lại.");
+        console.error("Error fetching orders:", err);
+        setOrders([]); // optional: reset khi lỗi
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
+    };
+  
+    if (accId) {
+      fetchOrders();
     }
-
-    fetchOrders()
-  }, [accId])
+  }, [accId]);
 
   const filteredOrders = activeTab === "all" ? orders : orders.filter((order) => order.status === activeTab)
 
@@ -221,6 +199,11 @@ export default function OrderTrackingPage() {
                     >
                       {statusConfig[order.status].label}
                     </span>
+                    {order.typeOrder == "rent"&&<span
+                      className={`text-xs px-2 py-1 rounded-full font-medium ${statusConfig[order.status].className}`}
+                    >
+                      Đơn thuê
+                    </span>}
                   </div>
                   <span className="text-xs text-muted-foreground">{formatDate(order.createdAt)}</span>
                 </div>

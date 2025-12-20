@@ -192,7 +192,9 @@ export default function Header() {
               >
                 Trang phục, Nhẫn
               </h4>
+              <Link to={'/recommend'} style={{ textDecoration: 'none', color: 'inherit' }}>
               <h4 className={`me-3 ${style.headeritem}`}>Lập kế hoạch tự động</h4>
+              </Link>
               <Link to={'/favourite'} style={{ textDecoration: 'none', color: 'inherit' }}>
                 <h4 className={`me-3 ${style.headeritem}`}>Yêu thích</h4>
               </Link>

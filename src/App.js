@@ -13,6 +13,7 @@ import Statistics from './pages/Statistics/Statistics'
 import Header from './components/Header/Header'
 import Sidebar from './components/Sidebar/Sidebar'
 import Checklist from './pages/Checklist'
+import RecommendPage from './pages/RecommendPage'
 import Message from './pages/Message'
 import Budget from './pages/Budget'
 import Guests from './pages/Guests'
@@ -47,6 +48,7 @@ function App() {
         <Route path="/chat" element={<Message />} />
         <Route path="/guests" element={<Guests />} />
         <Route path="/budget" element={<Budget />} />
+        <Route path="/recommend" element={<RecommendPage />} />
       </Routes>
     </AppProvider>
   )
