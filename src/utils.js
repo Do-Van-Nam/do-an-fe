@@ -1,9 +1,12 @@
 const type = {
     // Group 1
     "venue": "Địa Điểm Tổ Chức",
-    "photographer": "Nhiếp Ảnh Gia",
-    "catering": "Tiệc Cưới",
     "bridal-gown": "Áo Cưới",
+    "catering": "Tiệc Cưới",
+    "flowers": "Hoa Cưới",
+    "makeup-services": "Dịch Vụ Trang Điểm",
+    "a-line-dress": "Váy chữ A",
+    "photographer": "Nhiếp Ảnh Gia",
     "wedding-planner": "Nhà Tổ Chức Đám Cưới",
     "wedding-cake": "Bánh Cưới",
     "dj": "DJ",
@@ -11,15 +14,12 @@ const type = {
   
     // Group 2
     "rental-bridal": "Cho Thuê Đồ Cưới",
-    "makeup-services": "Dịch Vụ Trang Điểm",
-    "flowers": "Hoa Cưới",
     "band": "Ban Nhạc",
     "bar-service": "Dịch Vụ Quay Bar",
     "transportation": "Rước Dâu",
     "invitations": "Thiệp cưới",
   
     // Bridal-gown nested types
-    "a-line-dress": "Váy chữ A",
     "ball-gown": "Váy dạ hội",
     "mermaid-dress": "Váy nàng tiên cá",
     "bodycon-dress": "Váy body",
