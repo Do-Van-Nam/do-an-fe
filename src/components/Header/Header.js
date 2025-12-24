@@ -135,7 +135,20 @@ export default function Header() {
       ],
     ],
   }
-
+  const admin = {
+    categoryName: 'Quản trị',
+    categoryItems: [
+      [
+        { categoryItemName: 'Quản lý Người dùng', link: '/admin/manage-user' },
+      ],
+      [
+        { categoryItemName: 'Quản lý Đơn hàng', link: '/admin/manage-order' },
+      ],
+      [
+        { categoryItemName: 'Quản lý Sản phẩm', link: '/admin/manage-vendor-item' },
+      ],
+    ],
+  }
   const vendorsRef = useRef(null)
   const handleClickOutside = (event) => {
     if (vendorsRef.current && !vendorsRef.current.contains(event.target)) {
@@ -192,10 +205,21 @@ export default function Header() {
               >
                 Trang phục, Nhẫn
               </h4>
-              <h4 className={`me-3 ${style.headeritem}`}>Lập kế hoạch tự động</h4>
+              <Link to={'/recommend'} style={{ textDecoration: 'none', color: 'inherit' }}>
+                <h4 className={`me-3 ${style.headeritem}`}>Lập kế hoạch tự động</h4>
+              </Link>
               <Link to={'/favourite'} style={{ textDecoration: 'none', color: 'inherit' }}>
                 <h4 className={`me-3 ${style.headeritem}`}>Yêu thích</h4>
               </Link>
+              {
+                acc.role == "manager" &&
+                <h4
+                className={`me-3 ${style.headeritem}`}
+                onClick={() => toggleExpanded('admin')}
+              >
+                Quản trị
+              </h4>
+              }
               {/* <Link to={'/profile'} style={{ textDecoration: 'none', color: 'inherit' }}>
                 <h4 className={`me-3 ${style.headeritem}`}>Trang cá nhân</h4>
               </Link> */}
@@ -217,7 +241,7 @@ export default function Header() {
           <div className="d-flex flex-column">
             <Link to={'/profile'} style={{ textDecoration: 'none', color: 'inherit' }}>
               <div className="d-flex flex-row">
-            <i class="bi bi-person-circle me-3" style={{ fontSize: '20px' }}></i>
+                <i class="bi bi-person-circle me-3" style={{ fontSize: '20px' }}></i>
 
                 <div className="" style={{ fontSize: '25px' }}>
                   {acc.name}
@@ -244,6 +268,11 @@ export default function Header() {
       {expandedCategory === 'attireAndRings' && (
         <div ref={vendorsRef}>
           <ExpandedHeader category={attireAndRings} />
+        </div>
+      )}
+      {expandedCategory === 'admin' && (
+        <div ref={vendorsRef}>
+          <ExpandedHeader category={admin} />
         </div>
       )}
     </div>

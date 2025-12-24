@@ -13,6 +13,7 @@ import Statistics from './pages/Statistics/Statistics'
 import Header from './components/Header/Header'
 import Sidebar from './components/Sidebar/Sidebar'
 import Checklist from './pages/Checklist'
+import RecommendPage from './pages/RecommendPage'
 import Message from './pages/Message'
 import Budget from './pages/Budget'
 import Guests from './pages/Guests'
@@ -23,6 +24,9 @@ import PrivateRoute from './PrivateRoute'
 
 import AppProvider from './AppContext'
 import { AppContext } from './AppContext'
+import ManagerOrderPage from './pages/Admin/ManageOder'
+import ManagerUser from './pages/Admin/ManageUser'
+import ManageVendorItem from './pages/Admin/ManageVendorItem'
 
 function App() {
   const location = useLocation()
@@ -47,6 +51,12 @@ function App() {
         <Route path="/chat" element={<Message />} />
         <Route path="/guests" element={<Guests />} />
         <Route path="/budget" element={<Budget />} />
+        <Route path="/recommend" element={<RecommendPage />} />
+        //admin
+        <Route path="/admin/manage-order*" element={<ManagerOrderPage />} />
+        <Route path="/admin/manage-user" element={<ManagerUser />} />
+      <Route path="/admin/manage-vendor-item" element={<ManageVendorItem />} />
+      
       </Routes>
     </AppProvider>
   )

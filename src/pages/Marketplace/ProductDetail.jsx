@@ -1,6 +1,6 @@
 "use client"
 
-import { useState,useEffect, useContext } from "react"
+import { useState,useEffect, useContext, } from "react"
 import { Star, ShoppingCart, Home, X, Calendar } from "lucide-react"
 import ProductImages from "./product-images"
 import ShopInfo from "./shop-info"
@@ -8,7 +8,7 @@ import ReviewsSection from "./reviews-section"
 import SimilarProducts from "./similar-products"
 import api from "../../api"
 import type from "../../utils"
-import { useParams } from "react-router-dom";
+import { useParams,useNavigate } from "react-router-dom";
 import { AppContext } from "../../AppContext"
 import  CheckoutPage  from "../Cart/checkout-page"
 
@@ -100,7 +100,20 @@ setPeriodRent(period == "day" ? "ngày" : period == "week" ? "tuần":"tháng")
     setRentData({ ...rentData, quantity })
     setShowRentPopup(true)
   }
-
+  const navigate = useNavigate()
+  const handleContact = async (e)=>{
+    e.preventDefault();     // Ngăn chuyển trang
+   e.stopPropagation(); 
+   try {
+     const response = await api.post(`/chatroom`,{
+       user1Id:acc._id, user2Id:vendorItem.accId
+     })
+   } catch (error) {
+     console.log(error)
+   }
+   
+   navigate('/chat')
+ }
   // Helper function to calculate rental price
   const calculateRentalPrice = (startDate, endDate, periodRent, priceRent, quantity) => {
     const start = new Date(startDate)
@@ -169,6 +182,7 @@ setPeriodRent(period == "day" ? "ngày" : period == "week" ? "tuần":"tháng")
       await api.post('/order/add', {
         accId: acc._id,
         itemId: vendorItem._id,
+        sellerId: vendorItem.accId,
         quantity: rentData.quantity,
         price: totalPrice,
         status: 'pending',
@@ -511,7 +525,7 @@ setPeriodRent(period == "day" ? "ngày" : period == "week" ? "tuần":"tháng")
                 </button>
               )}
               <button
-                onClick={handleContactSeller}
+                onClick={handleContact}
                 className="w-full rounded-lg border border-border px-4 py-3 font-semibold text-foreground hover:bg-muted"
               >
                 Liên Hệ Người Bán
@@ -538,6 +552,23 @@ setPeriodRent(period == "day" ? "ngày" : period == "week" ? "tuần":"tháng")
           <h2 className="mb-4 text-2xl font-bold text-foreground">Mô tả sản phẩm</h2>
           <p className="text-foreground">{vendorItem.description}</p>
         </div>
+
+        {/* Tags Section */}
+        {vendorItem.tags && vendorItem.tags.length > 0 && (
+          <div className="mt-8 rounded-lg border border-border bg-card p-6">
+            <h2 className="mb-4 text-2xl font-bold text-foreground"># tags</h2>
+            <div className="flex flex-wrap gap-2">
+              {vendorItem.tags.map((tag, index) => (
+                <span
+                  key={index}
+                  className="inline-block rounded-full bg-pink-100 px-4 py-2 text-sm font-medium text-pink-800 border border-pink-200 hover:bg-pink-200 transition-colors"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Shop Info */}
         <ShopInfo shop={shop} />
