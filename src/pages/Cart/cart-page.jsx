@@ -33,6 +33,7 @@ const CartPage = () => {
               );
               return {
                 vendorId: vendor.vendorId,
+                accId: vendor.accId,
                 quantity: vendor.quantity,
                 vendorDetail: vendorResponse.data.vendoritem, // { name, image, price }
                 selected: false,

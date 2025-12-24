@@ -47,6 +47,7 @@ export default function CheckoutPage({ items, totalPrice, onBack }) {
           itemId: item.vendorId,
           quantity: item.quantity,
           price: item.vendorDetail.priceSell,
+          sellerId: item.vendorDetail.accId
         })),
         paymentStatus: paymentMethod,
         totalAmount: totalPrice,

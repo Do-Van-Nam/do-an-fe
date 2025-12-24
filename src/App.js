@@ -24,6 +24,9 @@ import PrivateRoute from './PrivateRoute'
 
 import AppProvider from './AppContext'
 import { AppContext } from './AppContext'
+import ManagerOrderPage from './pages/Admin/ManageOder'
+import ManagerUser from './pages/Admin/ManageUser'
+import ManageVendorItem from './pages/Admin/ManageVendorItem'
 
 function App() {
   const location = useLocation()
@@ -49,6 +52,11 @@ function App() {
         <Route path="/guests" element={<Guests />} />
         <Route path="/budget" element={<Budget />} />
         <Route path="/recommend" element={<RecommendPage />} />
+        //admin
+        <Route path="/admin/manage-order*" element={<ManagerOrderPage />} />
+        <Route path="/admin/manage-user" element={<ManagerUser />} />
+      <Route path="/admin/manage-vendor-item" element={<ManageVendorItem />} />
+      
       </Routes>
     </AppProvider>
   )

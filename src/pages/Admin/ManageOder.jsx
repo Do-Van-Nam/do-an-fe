@@ -36,7 +36,7 @@ const statusConfig = {
 
 
 
-export default function OrderTrackingPage() {
+export default function ManagerOrderPage() {
   const { acc } = useContext(AppContext)
   const accId = acc._id
   const [activeTab, setActiveTab] = useState("all")
@@ -50,7 +50,7 @@ export default function OrderTrackingPage() {
         setLoading(true);
         setError(null);
   
-        const response = await api.get(`/order/${accId}`);
+        const response = await api.get(`/order/all`);
         const orderList = response.data.order; // giả sử đây là mảng các order
   
         // Nếu không có đơn hàng
