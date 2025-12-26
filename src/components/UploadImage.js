@@ -25,10 +25,10 @@ const UploadImage = ({ onUploadSuccess }) => {
             window: '#FFFFFF',
             sourceBg: '#F5F5F5',
             windowBorder: '#90A0B3',
-            tabIcon: '#0078FF',
+            tabIcon: '#db2777',
             inactiveTabIcon: '#999999',
             textDark: '#000000',
-            link: '#0078FF',
+            link: '#db2777',
           },
         },
       },
@@ -50,7 +50,7 @@ const UploadImage = ({ onUploadSuccess }) => {
             onUploadSuccess(url)
           }
 
-          alert('Upload ảnh lên Cloudinary thành công! (Sẽ lưu khi bạn bấm "Lưu sản phẩm")')
+          alert('Upload ảnh lên Cloudinary thành công!')
         }
       }
     )
@@ -75,7 +75,7 @@ const UploadImage = ({ onUploadSuccess }) => {
         type="button" // 👈 THÊM ĐỂ KHÔNG SUBMIT FORM KHI CLICK
         onClick={openCloudinaryWidget}
         disabled={loading}
-        className="px-6 py-3 text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition"
+        className="px-6 py-3 text-white bg-pink-600 rounded-lg hover:bg-pink-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition"
       >
         {loading ? 'Đang upload...' : 'Tải ảnh lên Cloudinary'}
       </button>

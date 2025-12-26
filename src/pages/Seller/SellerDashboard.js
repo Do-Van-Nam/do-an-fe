@@ -46,14 +46,24 @@ export default function SellerDashboard() {
       {' '}
       {/* Giữ pt-20 để tránh header che */}
       <div className="max-w-6xl mx-auto">
-        {/* Tiêu đề + Nút thêm */}
+        {/* Tiêu đề + Nút thêm + Nút đơn hàng */}
         <div className="pt-10 flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4">
           <h2 className="text-3xl font-bold text-gray-800">Quản lý sản phẩm</h2>
-          <Link to="/seller/add">
-            <button className="px-6 py-3 bg-pink-600 text-white font-semibold rounded-lg hover:bg-pink-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition shadow-md">
-              + Thêm sản phẩm mới
-            </button>
-          </Link>
+          <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+            {/* Nút Đơn hàng của bạn */}
+            <Link to="/seller/orders" className="w-full sm:w-auto">
+              <button className="w-full px-6 py-3 bg-purple-600 text-white font-semibold rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-4 focus:ring-purple-300 transition shadow-md">
+                Đơn hàng của bạn
+              </button>
+            </Link>
+
+            {/* Nút Thêm sản phẩm mới */}
+            <Link to="/seller/add" className="w-full sm:w-auto">
+              <button className="w-full px-6 py-3 bg-pink-600 text-white font-semibold rounded-lg hover:bg-pink-700 focus:outline-none focus:ring-4 focus:ring-pink-300 transition shadow-md">
+                + Thêm sản phẩm mới
+              </button>
+            </Link>
+          </div>
         </div>
 
         {/* Chưa có sản phẩm */}
@@ -98,7 +108,19 @@ export default function SellerDashboard() {
                   ) : (
                     <p className="text-gray-400 text-sm italic mb-4">Chưa có mô tả</p>
                   )}
-
+                  {/* Tags */}
+                  {item.tags?.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mt-4">
+                      {item.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="px-3 py-1 text-xs font-medium bg-pink-100 text-pink-800 rounded-full"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                   {/* Giá bán / thuê */}
                   <div className="space-y-2 mb-6 mt-auto">
                     {item.priceSell && (

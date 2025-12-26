@@ -211,14 +211,8 @@ export default function Header() {
                     <span className="fw-bold fs-5">{acc.name}</span>
                   </Link>
                 ) : (
-                  <Link to="/profile">
-                    <img
-                      src="/public/placeholder-user copy.jpg"
-                      alt="avatar"
-                      width={40}
-                      height={40}
-                      className="rounded-circle"
-                    />
+                  <Link to="/profile" className="text-decoration-none">
+                    <div className="fw-bold fs-5 text-decoration-none text-dark mb-1">New user</div>
                   </Link>
                 )}
 

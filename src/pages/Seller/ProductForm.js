@@ -23,6 +23,20 @@ export default function ProductForm() {
     priceSell: 0,
     priceRent: 0,
     periodRent: 'day',
+    tags: [
+      'cổ điển',
+      'sang trọng',
+      'hiện đại',
+      'tối giản',
+      'luxury',
+      'rustic',
+      'beach wedding',
+      'garden wedding',
+      'elegant',
+      'playful',
+      'minimalist',
+      'glamorous',
+    ],
   })
 
   // 👇 LOAD DATA KHI EDIT
@@ -43,6 +57,7 @@ export default function ProductForm() {
           priceSell: item.priceSell || 0,
           priceRent: item.priceRent || 0,
           periodRent: item.periodRent || 'day',
+          tags: item.tags || [],
         })
       } catch (err) {
         alert('Không load được sản phẩm')
@@ -81,6 +96,7 @@ export default function ProductForm() {
       priceRent: Number(form.priceRent) || 0,
       periodRent: form.periodRent,
       imgLink: form.imgLink, // URL từ Cloudinary
+      tags: form.tags,
     }
 
     try {
@@ -116,7 +132,7 @@ export default function ProductForm() {
             value={form.name}
             onChange={handleChange}
             required
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition"
           />
         </div>
 
@@ -132,7 +148,7 @@ export default function ProductForm() {
             value={form.type}
             onChange={handleChange}
             required
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition"
           />
         </div>
 
@@ -145,10 +161,46 @@ export default function ProductForm() {
             value={form.description}
             onChange={handleChange}
             rows={4}
-            className="w-full h-20 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition resize-vertical"
+            className="w-full h-20 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition resize-vertical"
           />
         </div>
-
+        {/* Tags sản phẩm */}
+        <div className="mb-6">
+          <label className="block text-sm font-semibold mb-3">Tags sản phẩm (chọn nhiều)</label>
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
+            {[
+              'cổ điển',
+              'sang trọng',
+              'hiện đại',
+              'tối giản',
+              'luxury',
+              'rustic',
+              'beach wedding',
+              'garden wedding',
+              'elegant',
+              'playful',
+              'minimalist',
+              'glamorous',
+            ].map((tag) => (
+              <label key={tag} className="flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  value={tag}
+                  checked={form.tags.includes(tag)}
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setForm({ ...form, tags: [...form.tags, tag] })
+                    } else {
+                      setForm({ ...form, tags: form.tags.filter((t) => t !== tag) })
+                    }
+                  }}
+                  className="mr-2 accent-pink-600"
+                />
+                <span className="text-sm text-gray-700">{tag}</span>
+              </label>
+            ))}
+          </div>
+        </div>
         {/* 👇 UPLOAD ẢNH BẰNG CLOUDINARY WIDGET */}
         <div>
           <label className="block text-sm font-semibold mb-2">Ảnh sản phẩm</label>
@@ -175,7 +227,7 @@ export default function ProductForm() {
             name="typeVendor"
             value={form.typeVendor}
             onChange={handleChange}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition"
           >
             <option value="sell">Bán</option>
             <option value="rent">Thuê</option>
@@ -193,7 +245,7 @@ export default function ProductForm() {
               placeholder="Ví dụ: 5000000"
               value={form.priceSell}
               onChange={handleChange}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition"
             />
           </div>
 
@@ -205,7 +257,7 @@ export default function ProductForm() {
               placeholder="Ví dụ: 500000"
               value={form.priceRent}
               onChange={handleChange}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition"
             />
           </div>
         </div>
@@ -217,7 +269,7 @@ export default function ProductForm() {
             name="periodRent"
             value={form.periodRent}
             onChange={handleChange}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition"
           >
             <option value="day">Ngày</option>
             <option value="week">Tuần</option>
