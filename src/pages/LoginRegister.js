@@ -1,9 +1,9 @@
-import React, { useContext, useState ,useEffect} from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AppContext } from '../AppContext'
-import { signInWithPopup } from "firebase/auth";
+import { signInWithPopup } from 'firebase/auth'
 import api from '../api'
-import { auth, googleProvider } from "../firebase";
+import { auth, googleProvider } from '../firebase'
 
 export default function Home() {
   const navigate = useNavigate()
@@ -50,20 +50,23 @@ export default function Home() {
   const handleGoogleLogin = async () => {
     //window.location.href = `${api.defaults.baseURL}/auth/google`
     try {
-      const result = await signInWithPopup(auth, googleProvider);
-      console.log("User info:", result.user);
+      const result = await signInWithPopup(auth, googleProvider)
+      console.log('User info:', result.user)
       //alert("Đăng nhập thành công! Xin chào " + result.user.displayName);
-      const response = await api.post('/login/withGg', { email:result.user.email, displayName: result.user.displayName }, { withCredentials: true })
+      const response = await api.post(
+        '/login/withGg',
+        { email: result.user.email, displayName: result.user.displayName },
+        { withCredentials: true }
+      )
       const { user } = response.data
       localStorage.setItem('role', user.role)
       localStorage.setItem('phone', phone)
       setAcc(user)
       navigate('/home')
     } catch (error) {
-      console.error(error);
+      console.error(error)
       //alert("Đăng nhập thất bại!");
       setLoginFailed(true)
-
     }
   }
 
@@ -71,25 +74,22 @@ export default function Home() {
     window.location.href = `${api.defaults.baseURL}/auth/facebook`
   }
   useEffect(() => {
-try {
-      api.get('/acc/check-auth')
-        .then(response => {
+    try {
+      api
+        .get('/acc/check-auth')
+        .then((response) => {
           console.log(response.data.user)
           setAcc(response.data.user)
           navigate('/home')
-        }
-        )
-        .catch(error => {
+        })
+        .catch((error) => {
           console.log(error)
-        }
-        )
+        })
     } catch (error) {
       console.log(error)
     }
+  }, [])
 
-  },[])
-
-    
   return (
     <div
       className="d-flex justify-content-center align-items-center"
@@ -109,13 +109,13 @@ try {
           }
 
           .btn-primary-custom {
-            background-color: #ff44cb;
+            background-color: #db2777;
             color: white;
             border: none;
             transition: 0.2s ease-in-out;
           }
           .btn-primary-custom:hover {
-            background-color: #ff44cb;
+            background-color: #ad3068ff;
             color: #777;
           }
 

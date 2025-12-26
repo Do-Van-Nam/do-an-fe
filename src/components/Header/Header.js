@@ -1,66 +1,67 @@
 import React, { useContext, useEffect, useState, useRef } from 'react'
 import { AppContext } from '../../AppContext'
-import axios from 'axios'
 import api from '../../api'
-import { useNavigate } from 'react-router-dom'
-import BuildingPopup from '../BuildingPopup'
-import Cookies from 'js-cookie'
+import { useNavigate, Link } from 'react-router-dom'
 import ExpandedHeader from './ExpandedHeader'
 import style from './Header.module.css'
-import { Link } from 'react-router-dom'
-import UploadImage from '../UploadImage'
 
 export default function Header() {
   const navigate = useNavigate()
+  const { acc, setAcc } = useContext(AppContext)
 
-  const { acc, setAcc, buildings, setBuildings, selectedBuilding, setSelectedBuilding } =
-    useContext(AppContext)
+  const [expandedCategory, setExpandedCategory] = useState(null)
+  const dropdownRef = useRef(null)
+
   const logOut = async () => {
     try {
       await api.post('/logout')
       localStorage.clear()
-      setAcc({})
-      navigate('/')
+      setAcc(null)
+      window.location.href = '/'
     } catch (error) {
       console.log(error)
     }
   }
 
-  // useEffect(() => {
-  //   console.log(acc)
-  //   if (acc && acc._id) {
-  //     api.get(`/building/${acc._id}`)
-  //       .then(response => {
-  //         setBuildings(response.data.buildings)
-  //         setSelectedBuilding(response.data.buildings[0])
-  //       })
-  //       .catch(error => {
-  //         console.error('Error fetching buildings by Owner ID:', error);
-  //       })
-  //   }
-  // }, [acc?._id])
-
   useEffect(() => {
-    try {
+    if (!acc) {
       api
         .get('/acc/check-auth')
-        .then((response) => {
-          console.log(response.data.user)
-          setAcc(response.data.user)
-        })
-        .catch((error) => {
-          navigate('/')
-          console.log(error)
-        })
-    } catch (error) {
-      console.log(error)
+        .then((res) => setAcc(res.data.user || null))
+        .catch(() => setAcc(null))
     }
-    console.log(acc)
+  }, [acc])
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setExpandedCategory(null)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  // const [isPopupVisible, setPopupVisible] = useState(false)
-  // const hidePopup = () => setPopupVisible(false)
-  // const showPopup = () => setPopupVisible(true)
+  const toggleExpanded = (category) => {
+    setExpandedCategory((prev) => (prev === category ? null : category))
+  }
+
+  const planningTools = {
+    categoryName: 'Kế hoạch',
+    categoryItems: [
+      [
+        { categoryItemName: 'Kế hoạch của bạn', link: '/home' },
+        { categoryItemName: 'Checklist', link: '/checklist' },
+        { categoryItemName: 'Ngân sách', link: '/budget' },
+      ],
+      [
+        { categoryItemName: 'Khách mời', link: '/guests' },
+        { categoryItemName: 'Gửi lời mời', link: '/send-message' },
+      ],
+      [{ categoryItemName: 'Online RSVP', link: '/online-rsvp' }],
+    ],
+  }
+
   const vendors = {
     categoryName: 'Nhà Cung Cấp',
     categoryItems: [
@@ -92,23 +93,8 @@ export default function Header() {
     ],
   }
 
-  const planningTools = {
-    categoryName: 'Kế hoạch',
-    categoryItems: [
-      [
-        { categoryItemName: 'Kế hoạch của bạn', link: '/home' },
-        { categoryItemName: 'Checklist', link: '/checklist' },
-        { categoryItemName: 'Ngân sách', link: '/budget' },
-      ],
-      [
-        { categoryItemName: 'Khách mời', link: '/guests' },
-        { categoryItemName: 'Gửi lời tới khách mời', link: '/send-message' },
-      ],
-      [{ categoryItemName: 'Online RSVP', link: '/online-rsvp' }],
-    ],
-  }
   const attireAndRings = {
-    categoryName: 'Trang phục và Nhẫn',
+    categoryName: 'Trang phục & Nhẫn',
     categoryItems: [
       [
         { categoryItemName: 'Váy cưới', link: '/marketplace/bridal-gown' },
@@ -119,77 +105,52 @@ export default function Header() {
         { categoryItemName: 'Váy ngắn', link: '/marketplace/short-dress' },
       ],
       [
-        { categoryItemName: 'Bộ vest và áo tuxedo', link: '/marketplace/suit-and-tuxedo' },
+        { categoryItemName: 'Bộ vest & Tuxedo', link: '/marketplace/suit-and-tuxedo' },
         { categoryItemName: 'Váy phù dâu', link: '/marketplace/bridesmaid-dress' },
       ],
       [
         { categoryItemName: 'Nhẫn cưới', link: '/marketplace/wedding-ring' },
-        { categoryItemName: 'Nhẫn cắt kiểu công chúa', link: '/marketplace/princess-cut-ring' },
-        { categoryItemName: 'Nhẫn cắt kiểu Asscher', link: '/marketplace/asscher-cut-ring' },
-        { categoryItemName: 'Nhẫn cắt kiểu đệm', link: '/marketplace/cushion-cut-ring' },
-        { categoryItemName: 'Nhẫn cắt kiểu ngọc lục bảo', link: '/marketplace/emerald-cut-ring' },
-        { categoryItemName: 'Nhẫn cắt kiểu hình quả lê', link: '/marketplace/pear-cut-ring' },
-        { categoryItemName: 'Nhẫn cắt kiểu rực rỡ', link: '/marketplace/radiant-cut-ring' },
-        { categoryItemName: 'Nhẫn cắt kiểu tròn', link: '/marketplace/round-cut-ring' },
-        { categoryItemName: 'Nhẫn cắt kiểu hình bầu dục', link: '/marketplace/oval-cut-ring' },
+        { categoryItemName: 'Nhẫn cắt công chúa', link: '/marketplace/princess-cut-ring' },
+        { categoryItemName: 'Nhẫn cắt Asscher', link: '/marketplace/asscher-cut-ring' },
+        { categoryItemName: 'Nhẫn cắt đệm', link: '/marketplace/cushion-cut-ring' },
+        { categoryItemName: 'Nhẫn cắt ngọc lục bảo', link: '/marketplace/emerald-cut-ring' },
+        { categoryItemName: 'Nhẫn cắt quả lê', link: '/marketplace/pear-cut-ring' },
+        { categoryItemName: 'Nhẫn cắt rực rỡ', link: '/marketplace/radiant-cut-ring' },
+        { categoryItemName: 'Nhẫn cắt tròn', link: '/marketplace/round-cut-ring' },
+        { categoryItemName: 'Nhẫn cắt bầu dục', link: '/marketplace/oval-cut-ring' },
       ],
     ],
   }
+
   const admin = {
     categoryName: 'Quản trị',
     categoryItems: [
-      [
-        { categoryItemName: 'Quản lý Người dùng', link: '/admin/manage-user' },
-      ],
-      [
-        { categoryItemName: 'Quản lý Đơn hàng', link: '/admin/manage-order' },
-      ],
-      [
-        { categoryItemName: 'Quản lý Sản phẩm', link: '/admin/manage-vendor-item' },
-      ],
+      [{ categoryItemName: 'Quản lý Người dùng', link: '/admin/manage-user' }],
+      [{ categoryItemName: 'Quản lý Đơn hàng', link: '/admin/manage-order' }],
+      [{ categoryItemName: 'Quản lý Sản phẩm', link: '/admin/manage-vendor-item' }],
     ],
   }
-  const vendorsRef = useRef(null)
-  const handleClickOutside = (event) => {
-    if (vendorsRef.current && !vendorsRef.current.contains(event.target)) {
-      setExpandedCategory(null)
-    }
-  }
-  const [expandedCategory, setExpandedCategory] = useState(null)
-  useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [])
 
-  const toggleExpanded = (category) => {
-    setExpandedCategory((prevCategory) => (prevCategory === category ? null : category))
-  }
   return (
     <div className="fixed-top d-flex flex-column">
       <nav
-        class="navbar  navbar-expand-lg bg-body-tertiary  
-    shadow p-2  bg-body-tertiary rounded d-flex flex-row
-    justify-content-around
-    "
+        className="navbar navbar-expand-lg bg-body-tertiary shadow p-2 bg-body-tertiary rounded d-flex flex-row justify-content-around"
         style={{ width: '100vw', zIndex: '999', height: '10vh' }}
       >
         <div className="d-flex align-items-center" style={{ height: '100%' }}>
           <Link to={'/'} style={{ textDecoration: 'none', color: 'inherit' }}>
-
             <img
               src="images/flower.png"
-              class=" me-2"
+              className="me-2"
               alt="..."
               style={{ height: '50px', width: 'auto' }}
-            ></img>
+            />
           </Link>
           <div className="d-flex flex-column">
             <Link to={'/'} style={{ textDecoration: 'none', color: 'inherit' }}>
               <div>Wedding Planner</div>
             </Link>
-            <div className="d-flex">
+            <div className="d-flex gap-3">
               <h4
                 className={`me-3 ${style.headeritem}`}
                 onClick={() => toggleExpanded('planningTools')}
@@ -211,68 +172,87 @@ export default function Header() {
               <Link to={'/favourite'} style={{ textDecoration: 'none', color: 'inherit' }}>
                 <h4 className={`me-3 ${style.headeritem}`}>Yêu thích</h4>
               </Link>
-              {
-                acc.role == "manager" &&
-                <h4
-                className={`me-3 ${style.headeritem}`}
-                onClick={() => toggleExpanded('admin')}
-              >
-                Quản trị
-              </h4>
-              }
-              {/* <Link to={'/profile'} style={{ textDecoration: 'none', color: 'inherit' }}>
-                <h4 className={`me-3 ${style.headeritem}`}>Trang cá nhân</h4>
-              </Link> */}
+
+              {/* 👇 MỤC MỚI: TRANG SẢN PHẨM – CHỈ HIỆN KHI LÀ SELLER */}
+              {acc?.role === 'seller' && (
+                <Link to="/seller" style={{ textDecoration: 'none', color: 'inherit' }}>
+                  <h4 className={`me-3 ${style.headeritem} text-pink-600 fw-bold`}>
+                    Trang sản phẩm
+                  </h4>
+                </Link>
+              )}
+
+              {acc?.role === 'manager' && (
+                <h4 className={`me-3 ${style.headeritem}`} onClick={() => toggleExpanded('admin')}>
+                  Quản trị
+                </h4>
+              )}
             </div>
           </div>
         </div>
 
         <div className="d-flex align-items-center">
-          {/* <UploadImage /> */}
           <Link to={'/cart'} style={{ textDecoration: 'none', color: 'inherit' }}>
-            <i class="bi bi-cart me-3" style={{ fontSize: '20px' }}></i>
+            <i className="bi bi-cart me-3" style={{ fontSize: '20px' }}></i>
           </Link>
           <Link to={'/order-tracking'} style={{ textDecoration: 'none', color: 'inherit' }}>
-            <i class="bi bi-bag-check me-3" style={{ fontSize: '20px' }}></i>
+            <i className="bi bi-bag-check me-3" style={{ fontSize: '20px' }}></i>
           </Link>
           <Link to={'/chat'} style={{ textDecoration: 'none', color: 'inherit' }}>
-            <i class="bi bi-chat me-3" style={{ fontSize: '20px' }}></i>
+            <i className="bi bi-chat me-3" style={{ fontSize: '20px' }}></i>
           </Link>
-          <div className="d-flex flex-column">
-            <Link to={'/profile'} style={{ textDecoration: 'none', color: 'inherit' }}>
-              <div className="d-flex flex-row">
-                <i class="bi bi-person-circle me-3" style={{ fontSize: '20px' }}></i>
 
-                <div className="" style={{ fontSize: '25px' }}>
-                  {acc.name}
+          {/* User section */}
+          <div className="d-flex flex-column align-items-end">
+            {acc ? (
+              <>
+                {acc.name ? (
+                  <Link to="/profile" className="text-decoration-none text-dark mb-1">
+                    <span className="fw-bold fs-5">{acc.name}</span>
+                  </Link>
+                ) : (
+                  <Link to="/profile" className="text-decoration-none">
+                    <div className="fw-bold fs-5 text-decoration-none text-dark mb-1">New user</div>
+                  </Link>
+                )}
+
+                <span
+                  onClick={logOut}
+                  className="text-danger fw-medium cursor-pointer small hover-underline"
+                >
+                  Đăng xuất
+                </span>
+              </>
+            ) : (
+              <Link to="/" className="d-flex align-items-center text-decoration-none text-dark">
+                <div
+                  className="bg-gray-300 rounded-circle d-flex align-items-center justify-content-center me-2"
+                  style={{ width: '40px', height: '40px' }}
+                >
+                  <i className="bi bi-person fs-4 text-white"></i>
                 </div>
-              </div>
-            </Link>
-            <div className="" style={{ cursor: 'pointer' }} onClick={logOut}>
-              Đăng xuất
-            </div>
+                <span className="fw-medium">Đăng nhập</span>
+              </Link>
+            )}
           </div>
         </div>
       </nav>
 
-      {expandedCategory === 'vendors' && (
-        <div ref={vendorsRef}>
-          <ExpandedHeader category={vendors} />
-        </div>
-      )}
-      {expandedCategory === 'planningTools' && (
-        <div ref={vendorsRef}>
-          <ExpandedHeader category={planningTools} />
-        </div>
-      )}
-      {expandedCategory === 'attireAndRings' && (
-        <div ref={vendorsRef}>
-          <ExpandedHeader category={attireAndRings} />
-        </div>
-      )}
-      {expandedCategory === 'admin' && (
-        <div ref={vendorsRef}>
-          <ExpandedHeader category={admin} />
+      {expandedCategory && (
+        <div ref={dropdownRef} className="bg-pink-50 shadow-lg border-t border-pink-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <ExpandedHeader
+              category={
+                expandedCategory === 'planningTools'
+                  ? planningTools
+                  : expandedCategory === 'vendors'
+                  ? vendors
+                  : expandedCategory === 'attireAndRings'
+                  ? attireAndRings
+                  : admin
+              }
+            />
+          </div>
         </div>
       )}
     </div>

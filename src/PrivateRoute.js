@@ -1,8 +1,16 @@
-import React from 'react';
-import { Navigate, Outlet } from 'react-router-dom';
+import React, { useContext } from 'react'
+import { Navigate, Outlet, useLocation } from 'react-router-dom'
+import { AppContext } from './AppContext' // 👈 SỬA ĐƯỜNG DẪN Ở ĐÂY
 
-const PrivateRoute = ({ isAuthenticated }) => {
-  return isAuthenticated ? <Outlet /> : <Navigate to="/" />;
-};
+const PrivateRoute = () => {
+  const { acc } = useContext(AppContext)
+  const location = useLocation()
 
-export default PrivateRoute;
+  if (!acc) {
+    return <Navigate to="/" replace state={{ from: location }} />
+  }
+
+  return <Outlet />
+}
+
+export default PrivateRoute
